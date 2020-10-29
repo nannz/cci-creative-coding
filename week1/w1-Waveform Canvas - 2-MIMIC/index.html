@@ -1,0 +1,109 @@
+
+
+<html>
+
+<head>
+ <script src = "https://mimicproject.com/libs/maximilian.js">
+</script>
+
+</head>
+
+<body>
+    <canvas></canvas>
+  <!-- home work: 
+	- Using at least 4 oscillators, create a continuous, drone-based sound texture or sound bed.
+	- Use two of the oscillators to control parameters of the other two oscillators.
+	- Make the sound texture vary continuously over a period of 1 minute through the use of low-frequency oscillators, so that the sound texture develops over the entire period. -->
+  
+    <!-- Our javascript code -->
+    <script type="text/javascript">
+      //update in 2: add LFO to control one amplitute
+        var drawOutput = new Array(1024);
+        var counter = 0;
+		var maximJs = maximilian();
+        var audio = new maximJs.maxiAudio();
+      
+      	var myOsc0 = new maximJs.maxiOsc();
+      	var myOsc = new maximJs.maxiOsc();
+        var myOsc2 = new maximJs.maxiOsc();
+      	var myOsc3 = new maximJs.maxiOsc();
+      	var myOsc4 = new maximJs.maxiOsc();
+       	// var mySettings = new maximJs.maxiSettings();
+        audio.init();
+      // The below needs to be set to the sample rate of your audio card, default is 44100 !
+      	// mySettings.sampleRate=44100;
+      
+        audio.play = function() {
+
+            counter++;
+			// to perceptually freeze the signal we divide the sampling rate by the buffer size and use this as frequency
+          //var sum = myOsc.sinewave(43.06640625 * 1.0) + myOsc2.sinewave(43.06640625 * 10) * 0.15;
+          // but this only works if the refresh rate is reliable which depends on your browser
+          
+          //below are the functions to explored
+          //var sum = myOsc.sinewave(43.06640625 * 5.0)*2;
+          //var sum = myOsc.sinewave(441*1);
+          //var sum = myOsc.coswave(441*1);
+          //var sum = myOsc.triangle(442*1);
+          //var sum = myOsc.saw(44*1);
+         // var sum = myOsc.sawn(50*1);
+        //var sum = myOsc.square(440, 0.1);//why just add the "pulsewidth", it doesn't show up?
+		//var sum = myOsc.phasor(44*1.0);//value between 0 and 1
+		//var sum = myOsc.phasor(44*1.0, 0.2, 0.8);//give a start phase and the end phase, (0,1)
+          
+          //the tryings and process are as below.
+          //var s1 = myOsc.sinewave(5)*(counter);//what if the amplitude increases overtime => omg, awful
+         //var s1 = myOsc.saw(counter%1024);//wow it's like a drumming!!打鼓, and the graphic is different from sin/cos; although doesn't sound nice
+          var s0 = myOsc0.coswave(10)*1.0;
+          var s1 = myOsc.sinewave(counter%1024)*0.2;
+          var s2 = myOsc2.sinewave(20)*3;
+          var s3 = myOsc3.sinewave(counter+20)* s0; // use LFOs to control the amplitude.
+          //var s4 = myOsc4.coswave(10)*s3;//sounds like as same as s3....
+          var s4 = myOsc4.coswave(s3*s2*100) *0.5;
+          var s5 = s2*s4 + s1;
+          var sum = s5; //pretty cool to deliver
+
+          var out = sum * 0.5;
+            
+            drawOutput[counter % 1024] = out;
+			return out;
+        };
+
+
+
+        var canvas = document.querySelector("canvas");
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        var context = canvas.getContext("2d");
+
+        canvas.setAttribute("width", width);
+        canvas.setAttribute("height", height);
+
+        var spacing = (width / 1024);
+
+        function draw() {
+
+            //This is basically the same as any other 2D processing draw routine.
+
+            //clear the screen
+            context.clearRect(0, 0, width, height);
+            //draw a square	
+
+
+            for (var i = 0; i < 1024; i++) {
+                context.beginPath();
+                context.moveTo(i * spacing, height / 2);
+                context.lineTo(i * spacing, height / 2 + (drawOutput[i] * height / 4));
+                context.stroke();
+                context.closePath();
+            }
+          requestAnimationFrame(draw);
+        }
+
+        requestAnimationFrame(draw);
+   
+</script>
+
+</body>
+
+</html>

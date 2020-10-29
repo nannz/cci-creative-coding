@@ -1,0 +1,91 @@
+<html>
+
+<head>
+ <script src = "https://mimicproject.com/libs/maximilian.js">
+</script>
+
+</head>
+
+<body>
+    <canvas></canvas>
+
+    <!-- Our javascript code -->
+    <script type="text/javascript">
+        var drawOutput = new Array(1024);
+        var counter = 0;
+		var maximJs = maximilian();
+        var audio = new maximJs.maxiAudio();   
+      var myOsc0 = new maximJs.maxiOsc();
+      	var myOsc1 = new maximJs.maxiOsc();
+        var myOsc2 = new maximJs.maxiOsc();
+      var myOsc3 = new maximJs.maxiOsc();
+      var myOsc4 = new maximJs.maxiOsc();
+       	// var mySettings = new maximJs.maxiSettings();
+        audio.init();
+      // The below needs to be set to the samplerate of your audio card, default is 44100 !
+      	// mySettings.sampleRate=44100;
+      
+        audio.play = function() {
+
+            counter++;
+			
+            //var sum = myOsc.sinewave(43.06640625 * 1.0) + myOsc2.sinewave(43.06640625 * 10) * 0.15;
+          var s0 = myOsc0.coswave(0.06)*90;
+          var s1 = myOsc1.sinewave(0.5)*200.0;
+          var s2 = myOsc2.saw(4);//like beat
+          var s3 = myOsc3.sinewave(500 + s0);
+          var s4 = myOsc4.sinewave(counter%1024 + s1)*0.6;
+          var s5 = value_limit(s0*s3, -5,5)*0.05;//do some clipping here
+          var s6 = s4+s5+s2;
+          
+          var sum = s6;
+          //clipping
+		  //sum = value_limit(sum, -1, 1);
+          
+          
+            var out = sum * 0.25; //volume,loudness
+            
+            drawOutput[counter % 1024] = out;
+			return out;
+        };
+
+
+
+        var canvas = document.querySelector("canvas");
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        var context = canvas.getContext("2d");
+
+        canvas.setAttribute("width", width);
+        canvas.setAttribute("height", height);
+
+        var spacing = (width / 1024);
+
+        function draw() {
+            //This is basically the same as any other 2D processing draw routine.
+            //clear the screen
+            context.clearRect(0, 0, width, height);
+            //draw a square	
+            for (var i = 0; i < 1024; i++) {
+                context.beginPath();
+                context.moveTo(i * spacing, height / 2);
+                context.lineTo(i * spacing, height / 2 + (drawOutput[i] * height / 4));
+                context.stroke();
+                context.closePath();
+            }
+          requestAnimationFrame(draw);
+        }
+
+        requestAnimationFrame(draw);
+      
+      //function do the clipping
+      function value_limit(val, min, max) {
+  		return val < min ? min : (val > max ? max : val);
+	  }
+      
+   
+</script>
+
+</body>
+
+</html>
