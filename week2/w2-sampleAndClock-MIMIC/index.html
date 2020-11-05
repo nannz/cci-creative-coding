@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <script src = "https://mimicproject.com/libs/maximilian.js">
+</script>
+ <script src = "https://rawgit.com/nexus-js/ui/master/dist/NexusUI.js">
+</script>
+  <style type = "text/css" >
+#inner-container {
+  background-color: #8ED9FF;
+  width:800px;
+  padding:20px;
+  position:absolute;
+}
+
+#main-container {
+  background-color: #8ED9FF;
+  width:auto;
+  height:800px;
+}
+
+body {
+/*   font-family: 'Staatliches'; */
+  font-size: 30px;
+  color: black;
+  text-align: left;
+}
+
+#subtitle {
+  font-size: 70%;
+}
+
+button {
+  background-color: transparent;
+  color:grey;
+  border:solid black 5px;
+  width:120px;
+  padding:10px;
+  margin:10px;
+/*   font-family: 'Staatliches'; */
+    font-size: 25px;
+}
+
+button:hover {
+  background-color: transparent;
+  color:#FFD12C;
+  border:solid #FFD12C 5px;
+}
+
+</style>
+</head>
+<body>
+  <div id="title">Week 2 Homework</div>
+  <div id="subtitle">maxiSample and maxiClock by Nan</div>
+  <div><button id="playButton">Play</button></div>
+  <div><button id="stopButton" style="display:none">Stop</button></div>
+  <div id="oscilloscope"></div>
+  <div id="spectrogram"></div>
+<script language="javascript" type="text/javascript">
+
+  let maxi = maximilian();//bring all the library in
+  let audio = new maxi.maxiAudio();
+  let myOsc1 = new maxi.maxiOsc();
+  let myOsc2 = new maxi.maxiOsc();
+  
+  let myClap = new maxi.maxiSample();
+  let myKick = new maxi.maxiSample();
+  let myKick2 = new maxi.maxiSample();//dong
+  let myPer = new maxi.maxiSample();
+  let mySnare = new maxi.maxiSample();
+  let myTam = new maxi.maxiSample();
+  let myRide = new maxi.maxiSample();
+  let myCrash = new maxi.maxiSample();
+  
+  let myClock = new maxi.maxiClock();
+  var myDelay = new maxi.maxiDelayline();
+  
+  //audio.init();
+  
+  var tempo = 128;
+  var ticks = 4;
+  var clapCount = 12;
+  var clapPitch = 0.5;
+  var clapGain = 1.0;
+  
+  var delayTime = ((tempo/64 * 44100) / 16) * 1;
+  var feedback = 0.4;
+  
+  myClock.setTempo(tempo);//120 beats per minute
+  myClock.setTicksPerBeat(ticks);
+  
+  var oscilloscope,spectrogram;
+  
+  let playAudio = () => {
+    playButton.style.display="none";
+    audio.init();
+    
+    audio.loadSample("Clap1.wav", myClap);
+  	audio.loadSample("Kick1.wav", myKick);
+  	audio.loadSample("Kick04.wav", myKick2);
+  	audio.loadSample("Percussion1.wav", myPer);
+  	audio.loadSample("Snare01.wav", mySnare);
+  	audio.loadSample("Tambourine01.wav", myTam);
+  	audio.loadSample("Ride01.wav", myRide);
+  	audio.loadSample("Crash04.wav", myCrash);
+    
+     //show an oscilloscope and freqscope
+    Nexus.context = audio.context;
+    oscilloscope = new Nexus.Oscilloscope('oscilloscope', {'size': [400,100]}).connect(audio.maxiAudioProcessor);
+    spectrogram = new Nexus.Spectrogram('spectrogram', {'size': [400,100]}).connect(audio.maxiAudioProcessor);
+    
+     audio.play = function(){
+     	 myClock.ticker();
+       
+       if (myClock.tick && myClock.playHead%8 == 4){ //playhead is a number increasing based on time
+    	mySnare.trigger();//use with playonce
+        myKick.trigger();
+    }
+       if (myClock.tick && myClock.playHead%4 == 0){ //playhead is a number increasing based on time
+    	myKick.trigger();//use with playonce
+    }
+       if (myClock.tick && myClock.playHead%8 == 1){
+        myKick2.trigger();
+    }
+       if( myClock.tick && myClock.playHead%16===6){
+      clapPitch=Math.random()*10;
+      myClap.trigger();
+      clapGain = 0.7;
+    }
+       if(myClock.tick && myClock.playHead%16 == 0){
+       if (Math.random()>0.75){
+        myTam.trigger();
+      }
+    }
+    
+    	var speedKick2 = myOsc2.sinewave(1)* 2.5;//rythm for snare
+    	var speedTam = myOsc1.phasor(Math.random(10));//linear ramp
+    
+    	var speedClap1 = Math.abs(myOsc1.sinewave(clapPitch)*Math.random());
+    	var speedClap2 = 1;
+    	var speedClap =(Math.random()>0.5)? speedClap1 : speedClap2;
+    
+    	var kickAmp = myClock.playHead % 2 ? 0.3 : 0.8;
+    	var snareAmp = myClock.playHead % 4 ? 0.1 : 0.5;
+       
+       var output = snareAmp * mySnare.playOnce()+ kickAmp * myKick.playOnce();
+       var output2 = myKick2.playOnce(speedKick2) + clapGain * myClap.playOnce(speedClap2) + myTam.playOnce(speedTam);
+       var delayOutput = myDelay.dl(output,delayTime,feedback);
+       
+       return (output+output2)*0.25 + delayOutput*0.2;
+     }
+  }
+  
+  playButton.addEventListener("click", () => playAudio());
+  
+
+</script>
+</body>
+</html>
