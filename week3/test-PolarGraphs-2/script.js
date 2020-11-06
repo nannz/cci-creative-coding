@@ -18,9 +18,7 @@ var context = canvas.getContext("2d");
 canvas.setAttribute("width", width);
 canvas.setAttribute("height", height);
 
-var spacing = ((Math.PI * 2) / 1024);
-var size = 200;
-var position = 200;
+
 // This works out a frequency we can use that matches the buffersize
 var bufferFreq=44100/1024;
 
@@ -43,16 +41,25 @@ let playAudio = () => {
 playButton.addEventListener("click", () => playAudio());
 
 
+var positionBaseX = width/2;
+var positionBaseY = height/2;
 function draw() {
 
     context.clearRect(0, 0, width, height);
+    //var spacing = ((Math.PI * 2) / 1024);
+    var spacing = ((Math.PI * 2) / 1024 * 4);
+    var size = 200;
 
     for (var i = 0; i < 1024; i++) {
+        positionX = positionBaseX + Math.cos(i*spacing)*size/2;
+        positionY = positionBaseY + Math.sin(i*spacing)*size/2;
         context.beginPath();
         //there is a more efficient way to do the code.
-        context.moveTo(position + (Math.cos(i * spacing) * size * drawOutput[i]),(height / 2) + (Math.sin(i * spacing) * size * drawOutput[i]));
-
-        context.lineTo(position + (Math.cos(i * spacing) * drawOutput[i]),(height / 2) + (Math.sin(i * spacing) * drawOutput[i]));
+        context.moveTo(positionX + (Math.cos(i * spacing) * size * drawOutput[i]),positionY + (Math.sin(i * spacing) * size * drawOutput[i]));
+        //context.lineTo(positionX+ 100 + Math.sin(i * spacing)*100,positionY -100 + Math.cos(i * spacing)*100);
+        context.lineTo(positionX,positionY );
+        //context.lineTo(position + (Math.cos(i * spacing) ),(height / 2) + (Math.sin(i * spacing)));
+        // context.lineTo(position + (Math.cos(i * spacing) * drawOutput[i]),(height / 2) + (Math.sin(i * spacing) * drawOutput[i]));
 
         context.stroke();
         context.closePath();
