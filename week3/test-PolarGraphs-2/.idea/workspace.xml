@@ -67,7 +67,7 @@
       <updated>1604695478111</updated>
       <workItem from="1604695479649" duration="2463000" />
       <workItem from="1604698114119" duration="343000" />
-      <workItem from="1604698467775" duration="3027000" />
+      <workItem from="1604698467775" duration="4219000" />
     </task>
     <servers />
   </component>
@@ -87,6 +87,10 @@
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="962" y="360" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.23.1680.1027@0.23.1680.1027" timestamp="1604697944173" />
+    <state x="573" y="73" key="CommitChangelistDialog2" timestamp="1604703063598">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="573" y="73" key="CommitChangelistDialog2/0.23.1680.1027@0.23.1680.1027" timestamp="1604703063598" />
     <state x="218" y="216" key="SettingsEditor" timestamp="1604700678009">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
