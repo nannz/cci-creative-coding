@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="793efb8e-62be-4594-a616-26656c38414e" name="Default Changelist" comment="">
+      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/codeStyles/codeStyleConfig.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/inspectionProfiles/profiles_settings.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/misc.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/test-JW-algorithm.iml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/test-JW-algorithm.iml" afterDir="false" />
+      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/vcs.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/script.js" beforePathEscaped="$PROJECT_DIR$/script.js" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/script.js" afterPathEscaped="$PROJECT_DIR$/script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +74,10 @@
       <workItem from="1604698114119" duration="343000" />
       <workItem from="1604698467775" duration="4219000" />
       <workItem from="1604704300863" duration="1351000" />
-      <workItem from="1604705953456" duration="4626000" />
+      <workItem from="1604705953456" duration="4945000" />
+      <workItem from="1604717561079" duration="141000" />
+      <workItem from="1604717762324" duration="6000" />
+      <workItem from="1604718390722" duration="291000" />
     </task>
     <servers />
   </component>
@@ -87,10 +95,10 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state x="460" y="175" width="1071" height="724" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1604704362907">
+    <state x="460" y="175" width="1071" height="724" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1604717765942">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state x="460" y="175" width="1071" height="724" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1680.1027@0.23.1680.1027" timestamp="1604704362907" />
+    <state x="460" y="175" width="1071" height="724" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1680.1027@0.23.1680.1027" timestamp="1604717765942" />
     <state x="936" y="307" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1604697923280">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
