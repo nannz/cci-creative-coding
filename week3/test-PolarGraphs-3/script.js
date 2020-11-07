@@ -1,7 +1,8 @@
 //version log:
+//positionX and positionY is changing based on frameRate
 //add the gradient color changes, with the transparent bg.
 // Next:
-// positionX and positionY is changing based on frameRate
+// size/radius will change according to sinwave
 
 const playButton = document.getElementById('playButton');
 var changeThis = 1;
@@ -55,8 +56,9 @@ playButton.addEventListener("click", () => playAudio());
 
 var positionBaseX = width/2;
 var positionBaseY = height/2;
+var frameCount = 0;
 function draw() {
-    context.fillStyle = 'rgba(255,255,255,0.1)';
+    context.fillStyle = 'rgba(255,255,255,0.01)';
     context.fillRect(0, 0, width, height);
     //context.clearRect(0, 0, width, height);
 
@@ -65,11 +67,15 @@ function draw() {
     var sizeSpacing = 5/1024;
     var size = 200;
     for (var i = 0; i < 1024; i++) {
-        positionX = positionBaseX + Math.sin(i*spacing)*size*i*sizeSpacing *drawCentre[i];
-        positionY = positionBaseY + Math.cos(i*spacing)*size*i*sizeSpacing * drawCentre[i];
+        //positionX = positionBaseX + Math.sin(i*spacing)*size*i*sizeSpacing *drawCentre[i];
+        //positionY = positionBaseY + Math.cos(i*spacing)*size*i*sizeSpacing * drawCentre[i];
+
+        positionX = positionBaseX + Math.cos(frameCount*0.01)*size;
+        positionY = positionBaseX + Math.sin(frameCount*0.015)*size;
+
         context.beginPath();
         //there is a more efficient way to do the code.
-        context.moveTo(positionBaseX + (Math.cos(i * spacing) * size * drawOutput[i]),positionBaseY + (Math.sin(i * spacing) * size * drawOutput[i]));
+        context.moveTo(positionX + (Math.cos(i * spacing) * size * drawOutput[i]),positionY + (Math.sin(i * spacing) * size * drawOutput[i]));
         //context.lineTo(positionX+ 100 + Math.sin(i * spacing)*100,positionY -100 + Math.cos(i * spacing)*100);
         context.lineTo(positionX,positionY );
         //context.lineTo(position + (Math.cos(i * spacing) ),(height / 2) + (Math.sin(i * spacing)));
@@ -80,6 +86,7 @@ function draw() {
         context.strokeStyle= 'rgba('+ i*colourSpacing + ', 200, 225, 0.1)';
         context.closePath();
     }
+    frameCount ++;
     requestAnimationFrame(draw);
 }
 
