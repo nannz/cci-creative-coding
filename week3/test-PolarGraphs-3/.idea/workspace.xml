@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="793efb8e-62be-4594-a616-26656c38414e" name="Default Changelist" comment="">
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/codeStyles/codeStyleConfig.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/inspectionProfiles/profiles_settings.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/misc.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/test-JW-algorithm.iml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/test-JW-algorithm.iml" afterDir="false" />
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/vcs.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +73,7 @@
       <workItem from="1604717561079" duration="141000" />
       <workItem from="1604717762324" duration="6000" />
       <workItem from="1604718390722" duration="291000" />
+      <workItem from="1604849817241" duration="99000" />
     </task>
     <servers />
   </component>

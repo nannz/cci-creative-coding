@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4f72b29d-f203-4683-82a6-2ce47cabb690" name="Default Changelist" comment="">
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/codeStyles/codeStyleConfig.xml" afterPathEscaped="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/inspectionProfiles/profiles_settings.xml" afterPathEscaped="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/misc.xml" afterPathEscaped="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/test-JW-algorithm.iml" afterPathEscaped="$PROJECT_DIR$/.idea/test-JW-algorithm.iml" afterDir="false" />
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/vcs.xml" afterPathEscaped="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/script.js" beforePathEscaped="$PROJECT_DIR$/script.js" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/script.js" afterPathEscaped="$PROJECT_DIR$/script.js" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-3/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/../test-PolarGraphs-3/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,7 +59,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1604717862553</updated>
-      <workItem from="1604717863576" duration="1069000" />
+      <workItem from="1604717863576" duration="1357000" />
+      <workItem from="1604849928857" duration="692000" />
     </task>
     <servers />
   </component>
@@ -77,22 +75,22 @@
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="498" y="309" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1680.1027@0.23.1680.1027" timestamp="1604717908833" />
-    <state width="906" height="255" key="GridCell.Tab.0.bottom" timestamp="1604717899875">
+    <state width="906" height="255" key="GridCell.Tab.0.bottom" timestamp="1604832417036">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state width="906" height="255" key="GridCell.Tab.0.bottom/0.23.1680.1027@0.23.1680.1027" timestamp="1604717899875" />
-    <state width="906" height="255" key="GridCell.Tab.0.center" timestamp="1604717899874">
+    <state width="906" height="255" key="GridCell.Tab.0.bottom/0.23.1680.1027@0.23.1680.1027" timestamp="1604832417036" />
+    <state width="906" height="255" key="GridCell.Tab.0.center" timestamp="1604832417035">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state width="906" height="255" key="GridCell.Tab.0.center/0.23.1680.1027@0.23.1680.1027" timestamp="1604717899874" />
-    <state width="906" height="255" key="GridCell.Tab.0.left" timestamp="1604717899873">
+    <state width="906" height="255" key="GridCell.Tab.0.center/0.23.1680.1027@0.23.1680.1027" timestamp="1604832417035" />
+    <state width="906" height="255" key="GridCell.Tab.0.left" timestamp="1604832417035">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state width="906" height="255" key="GridCell.Tab.0.left/0.23.1680.1027@0.23.1680.1027" timestamp="1604717899873" />
-    <state width="906" height="255" key="GridCell.Tab.0.right" timestamp="1604717899874">
+    <state width="906" height="255" key="GridCell.Tab.0.left/0.23.1680.1027@0.23.1680.1027" timestamp="1604832417035" />
+    <state width="906" height="255" key="GridCell.Tab.0.right" timestamp="1604832417036">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state width="906" height="255" key="GridCell.Tab.0.right/0.23.1680.1027@0.23.1680.1027" timestamp="1604717899874" />
+    <state width="906" height="255" key="GridCell.Tab.0.right/0.23.1680.1027@0.23.1680.1027" timestamp="1604832417036" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -100,7 +98,6 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/script.js</url>
           <line>31</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

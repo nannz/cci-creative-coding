@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="793efb8e-62be-4594-a616-26656c38414e" name="Default Changelist" comment="" />
+    <list default="true" id="793efb8e-62be-4594-a616-26656c38414e" name="Default Changelist" comment="">
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -65,6 +67,7 @@
       <workItem from="1604695479649" duration="2463000" />
       <workItem from="1604698114119" duration="343000" />
       <workItem from="1604698467775" duration="4277000" />
+      <workItem from="1604849865452" duration="47000" />
     </task>
     <servers />
   </component>
