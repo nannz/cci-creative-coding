@@ -44,6 +44,10 @@ function draw() {
         var degrees = angle * Math.PI / 180;
         context.rotate(degrees + frameCount*0.01);
         context.fillStyle =  'hsl('+hue+', 100%, 70%)';
+
+        var freq = frameCount * 0.02;
+        var amp = 300;
+
         context.fillRect(25,25,200,200);
         context.restore();//like pop()
     }
