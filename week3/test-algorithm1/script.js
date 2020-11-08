@@ -30,6 +30,10 @@ function getMouse(mousePosition) {
 
 
 var t = 0.0;
+var hue = 0;
+var r = 0;
+var g = 200;
+var b = 160;
 // This function translates the canvas so that we're looking at it from a different position, meaning that 0,0 is somewhere else
 function draw() {
     //clear the screen
@@ -40,7 +44,8 @@ function draw() {
     //draw circles
     context.beginPath();
     for (let i = 0; i < NUM_LINES; i++){
-        context.strokeStyle = 'rgba(255,255,255,0.6)'; //set the line colour to black
+        context.strokeStyle = 'rgba('+r+','+g+','+b+',0.6)';
+        // context.strokeStyle = 'hsl('+ hue + ', 1.0, 0.7)';
         context.lineWidth = 1+Math.abs(Math.sin(t/10)*5);
         //start point: x1(t+i);y1(t+i);
         //end point: x2(t+i),y2(t+i));
@@ -51,6 +56,27 @@ function draw() {
     context.closePath();
 
     t += 0.5;
+
+    if (r<=254){
+        r+= 1;
+    }else{
+        r = 0;
+    }
+    if(g <= 254){
+        g += 1;
+    }else{
+        g = 200;
+    }
+    if (b <= 254){
+        b +=1;
+    }else{
+        b = 160;
+    }
+    if (hue <= 359){
+        hue+= 1;
+    }else{
+        hue = 0.0;
+    }
     requestAnimationFrame(draw);
 }
 
