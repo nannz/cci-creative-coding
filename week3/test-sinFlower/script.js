@@ -30,14 +30,14 @@ function getMouse(mousePosition) {
 
 var hue = 0;
 var frameCount = 0;
-// This function translates the canvas so that we're looking at it from a different position, meaning that 0,0 is somewhere else
-function draw() {
-    //clear the screen
-    context.fillStyle = 'rgba(0,0,0,0.1)';//blackground is black
-    context.fillRect(0, 0, width, height);
-    //context.moveTo(width/2, height/2);//not work for translate().
+// noise.seed(Math.random());
+context.fillRect(0, 0, width, height);
 
-    for (let angle = 0; angle <360; angle +=72){
+function draw() {
+    context.fillStyle = 'rgba(0,0,0,0.01)';//blackground is black
+    context.fillRect(0, 0, width, height);
+
+    for (let angle = 0; angle <360; angle +=(360/5)){
         context.save();//like push()
         context.translate(width/2, height/2);
 
@@ -47,8 +47,14 @@ function draw() {
 
         var freq = frameCount * 0.02;
         var amp = 300;
-
-        context.fillRect(25,25,200,200);
+        var noiseVal = Math.abs(noise.perlin2(freq,height/2))*amp;
+        //console.log(noiseVal);
+        freq = frameCount * 0.035;
+        amp = noiseVal*1.1;
+        var dist = Math.sin(freq+Math.random()*0.1)*amp ;
+        // console.log(noiseVal);
+        context.fillRect(dist,0,1,1);
+        drawLine(1,dist,hue);
         context.restore();//like pop()
     }
 
@@ -65,19 +71,12 @@ function draw() {
 requestAnimationFrame(draw);
 //the end.
 
-//x->sin y-> cos => circle
-//x-> sin1+sin2 can get a nearly circle but different shapes
-//better to have lower amplitude if your frequency is higher.
-function x1(t){//t is a float num
-    return Math.sin(t/10)*100 + Math.sin(t)*10;//sin(freq)*amp
-}
-function y1(t){//t is a float num
-    //divide t means lower the frequency ; multiply t means higher the frequency
-    return Math.cos(-t/10)*100 + Math.sin(t/5)*50;
-}
-function x2(t){
-    return Math.sin(t/10)*200 + Math.sin(t)*2 + Math.sin(t) *10;
-}
-function y2(t){
-    return Math.cos(t/20)* 200 + Math.cos(t/12)*20;
+function drawLine(lineWidth, endPoint,hue){
+    context.lineWidth = lineWidth;
+    context.strokeStyle = 'hsl('+hue+', 100%, 70%)';
+    context.beginPath();
+    context.moveTo(0,0);
+    context.lineTo(endPoint,0);
+    context.stroke();
+    context.closePath();
 }
