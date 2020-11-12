@@ -40,8 +40,8 @@ let playAudio = () => {
     maxiAudio.init();
 
     maxiAudio.play = function(){
-        //var wave = (osc.sawn(bufferFreq) - osc2.sawn(bufferFreq*1.001));
-        var wave = osc.sinewave(bufferFreq+osc2.sinewave(bufferFreq*changeThis)*osc3.sinewave(0.01)*1000);
+        var wave = (osc.sawn(bufferFreq) - osc2.sawn(bufferFreq*1.001));
+        //var wave = osc.sinewave(bufferFreq+osc2.sinewave(bufferFreq*changeThis)*osc3.sinewave(0.01)*1000);
         var wave2 = osc4.sinewave(bufferFreq*osc5.sinewave(bufferFreq*0.5)*osc6.sinewave(0.01)*100);
         // var wave2 = osc3.sinewave(bufferFreq*osc4.sinewave(bufferFreq));
         //var wave2 = (osc.sawn(bufferFreq) - osc3.sawn(bufferFreq*10.01));
@@ -75,8 +75,8 @@ function draw() {
         //changingSize = 1000* drawCentre[i] ;
         changingSize = Math.sin(i/1024*10)*sizeSpacing * i;
 
-        positionX = positionBaseX + Math.sin(i*spacing)*size*i*sizeSpacing *drawCentre[i];
-        positionY = positionBaseY + Math.cos(i*spacing)*size*i*sizeSpacing * drawCentre[i];
+        positionX = positionBaseX;// + Math.sin(i*spacing)*size*i*sizeSpacing;// *drawCentre[i];
+        positionY = positionBaseY;// + Math.cos(i*spacing)*size*i*sizeSpacing;//* drawCentre[i];
 
         //positionX = positionBaseX + Math.cos(frameCount*0.01)*size*i*sizeSpacing *drawCentre[i];
         //positionY = positionBaseY + Math.sin(frameCount*0.015)*size*i*sizeSpacing *drawCentre[i];

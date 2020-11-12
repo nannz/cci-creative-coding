@@ -66,7 +66,7 @@ function draw() {
     //context.clearRect(0, 0, width, height);
 
     var spacing = ((Math.PI * 2) / 1024 );
-    var colourSpacing = (255/1024);
+    var colourSpacing = Math.floor(255/1024);
     var sizeSpacing = 200/1024;
     var size = 50;
     var changingSize = 200;//Math.sin(frameCount/0.05*Math.random())*200;
