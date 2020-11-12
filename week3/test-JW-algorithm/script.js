@@ -13,46 +13,57 @@ var mouseY =canvas.height/2;
 var context = canvas.getContext("2d");
 //This tells the browser to get the mouse information from the function we've called getMouse
 canvas.addEventListener('mousemove', getMouse, false);
+canvas.addEventListener('click', mouseClick, false);
 
 //here's our function 'getMouse'.
 function getMouse(mousePosition) {
     mouseX = mousePosition.layerX;
     mouseY = mousePosition.layerY;
 }
+var jwCircles = [];//new Array(5);
+// This function translates the canvas so that we're looking at it from a different position, meaning that 0,0 is somewhere else
+// for(var i = 0; i<5; i ++){
+//     var jwCircle = new JWCircle(mouseX, mouseY, 200);
+//     jwCircles.push(jwCircle);
+// }
+
+
+//mouseClick, add a new jwCircles
+function mouseClick(){
+    var jwCircle = new JWCircle(mouseX, mouseY, 200);
+    jwCircles.push(jwCircle);
+}
+
 
 var segments = Math.floor(Math.random()*1000);
-var positionBaseX = canvas.width/2;
-var positionBaseY = canvas.height/2;
+// var positionBaseX = canvas.width/2;
+// var positionBaseY = canvas.height/2;
 
-// This function translates the canvas so that we're looking at it from a different position, meaning that 0,0 is somewhere else
+
+
 function draw() {
 
     //var segments = Math.floor(Math.random()*1000);
-    var spacing = TWO_PI / segments;
+    // var spacing = TWO_PI / segments;
     var radius = 200;
     //clear the screen
     context.clearRect(0,0, canvas.width, canvas.height);
 
-    //draw a circle with Path2D
-    var ellipse = new Path2D();
-    ellipse.arc(positionBaseX, positionBaseY, 25, 0, 2 * Math.PI);
-    context.stroke(ellipse);
+    //drawJW(mouseX,mouseY,radius,spacing);
 
-    //var jwCircle = new Path2D();//fail, cannot save the path as path2D
-    drawJW(mouseX,mouseY,radius,spacing);
-
+    jwCircles.forEach(jwCircle=>{
+        jwCircle.display();
+    });
 
 
     requestAnimationFrame(draw);
 }
 
-//request the first animation frame
 requestAnimationFrame(draw);
-//the end.
 
+//test wrapping in a function
 function drawJW(x,y,r,spacing){
     var jwRadius = Math.random()*r;
-    var jwCircle = new Path2D();
     //var segments = Math.floor(Math.random()*1000);
     context.save();//like push()
     context.translate(x, y);

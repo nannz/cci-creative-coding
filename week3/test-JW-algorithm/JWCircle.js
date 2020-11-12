@@ -1,8 +1,10 @@
+"use strict";
 class JWCircle{
-    constructor(x,y,r,spacing) {
+    constructor(x,y,r) {
         this.centreX = x;//mouseX
         this.centreY = y;//mouseY
-        this.spacing =spacing;
+        this.segments = Math.floor(Math.random()*1000);
+        this.spacing =TWO_PI / this.segments;
         this.hue = Math.floor(Math.random()*255);
         this.r = Math.random()*r;
     }

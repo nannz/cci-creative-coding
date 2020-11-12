@@ -2,26 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="096f6d47-fdde-4141-baee-a62af7bbb4ac" name="Default Changelist" comment="">
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/3-sinFlower.iml" afterPathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/3-sinFlower.iml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/test-PolarGraphs-2.iml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/test-PolarGraphs-2.iml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/vcs.xml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/test-PolarGraphs-3.iml" beforePathEscaped="$PROJECT_DIR$/.idea/test-PolarGraphs-3.iml" beforeDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/.gitignore" beforePathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/modules.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/test-sinFlower.iml" beforePathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/test-sinFlower.iml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/.gitignore" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/codeStyles/codeStyleConfig.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/inspectionProfiles/profiles_settings.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/misc.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/test-algorithm1.iml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/test-algorithm1.iml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/vcs.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/script.js" beforePathEscaped="$PROJECT_DIR$/../test-JW-algorithm/script.js" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/script.js" afterPathEscaped="$PROJECT_DIR$/../test-JW-algorithm/script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,13 +55,11 @@
       <updated>1605192623079</updated>
       <workItem from="1605192624180" duration="319000" />
       <workItem from="1605193200454" duration="5000" />
+      <workItem from="1605193725055" duration="120000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
   </component>
 </project>
