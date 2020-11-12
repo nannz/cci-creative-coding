@@ -2,35 +2,39 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4f72b29d-f203-4683-82a6-2ce47cabb690" name="Default Changelist" comment="">
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/.idea/test-PolarGraphs-2.iml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/.idea/test-PolarGraphs-2.iml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/.idea/vcs.xml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/script.js" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/script.js" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/styleCSS.css" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/styleCSS.css" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-2/test-PolarGraphs.html" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-2/test-PolarGraphs.html" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-3/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/.idea/test-PolarGraphs-3.iml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-3/.idea/test-PolarGraphs-3.iml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/.idea/vcs.xml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-3/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-3/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/script.js" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-3/script.js" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/styleCSS.css" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-3/styleCSS.css" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-PolarGraphs-3/test-PolarGraphs.html" beforePathEscaped="$PROJECT_DIR$/../test-PolarGraphs-3/test-PolarGraphs.html" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-sinFlower/.idea/.gitignore" beforePathEscaped="$PROJECT_DIR$/../test-sinFlower/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-sinFlower/.idea/codeStyles/codeStyleConfig.xml" beforePathEscaped="$PROJECT_DIR$/../test-sinFlower/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-sinFlower/.idea/inspectionProfiles/profiles_settings.xml" beforePathEscaped="$PROJECT_DIR$/../test-sinFlower/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-sinFlower/.idea/misc.xml" beforePathEscaped="$PROJECT_DIR$/../test-sinFlower/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-sinFlower/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../test-sinFlower/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-sinFlower/.idea/test-sinFlower.iml" beforePathEscaped="$PROJECT_DIR$/../test-sinFlower/.idea/test-sinFlower.iml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-sinFlower/.idea/vcs.xml" beforePathEscaped="$PROJECT_DIR$/../test-sinFlower/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-sinFlower/index.html" beforePathEscaped="$PROJECT_DIR$/../test-sinFlower/index.html" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-sinFlower/libraries/perlin.js" beforePathEscaped="$PROJECT_DIR$/../test-sinFlower/libraries/perlin.js" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-sinFlower/script.js" beforePathEscaped="$PROJECT_DIR$/../test-sinFlower/script.js" beforeDir="false" />
+      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/3-sinFlower.iml" afterPathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/3-sinFlower.iml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/test-PolarGraphs-2.iml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/test-PolarGraphs-2.iml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/vcs.xml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../2-PolarGraphs-dynamite/.idea/modules.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/../2-PolarGraphs-dynamite/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/test-PolarGraphs-3.iml" beforePathEscaped="$PROJECT_DIR$/../2-PolarGraphs-dynamite/.idea/test-PolarGraphs-3.iml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../2-PolarGraphs-dynamite/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/../2-PolarGraphs-dynamite/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/.gitignore" beforePathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/modules.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/test-sinFlower.iml" beforePathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/test-sinFlower.iml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/.gitignore" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/codeStyles/codeStyleConfig.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/inspectionProfiles/profiles_settings.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/misc.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/test-algorithm1.iml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/test-algorithm1.iml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/vcs.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/index.html" beforePathEscaped="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/index.html" afterPathEscaped="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/script.js" beforePathEscaped="$PROJECT_DIR$/script.js" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/test-JW-algorithm/script.js" afterPathEscaped="$PROJECT_DIR$/script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding" />
@@ -51,6 +55,7 @@
     <property name="JavaScriptPreferStrict" value="false" />
     <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -82,6 +87,8 @@
       <workItem from="1604717863576" duration="1357000" />
       <workItem from="1604849928857" duration="692000" />
       <workItem from="1605189481055" duration="5000" />
+      <workItem from="1605189560701" duration="2732000" />
+      <workItem from="1605193039156" duration="551000" />
     </task>
     <servers />
   </component>
@@ -118,7 +125,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/script.js</url>
-          <line>31</line>
+          <line>29</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="096f6d47-fdde-4141-baee-a62af7bbb4ac" name="Default Changelist" comment="">
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/3-sinFlower.iml" afterPathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/3-sinFlower.iml" afterDir="false" />
+    <list default="true" id="d6e6cdd4-ff07-4912-addc-0bf6ab4ee795" name="Default Changelist" comment="">
+      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/3-sinFlower.iml" afterPathEscaped="$PROJECT_DIR$/.idea/3-sinFlower.iml" afterDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/test-PolarGraphs-2.iml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/test-PolarGraphs-2.iml" beforeDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/vcs.xml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/1-PolarGraphs/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../1-PolarGraphs/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/test-PolarGraphs-3.iml" beforePathEscaped="$PROJECT_DIR$/.idea/test-PolarGraphs-3.iml" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/.gitignore" beforePathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/modules.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/test-sinFlower.iml" beforePathEscaped="$PROJECT_DIR$/../3-sinFlower/.idea/test-sinFlower.iml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/../2-PolarGraphs-dynamite/.idea/modules.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/../2-PolarGraphs-dynamite/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/test-PolarGraphs-3.iml" beforePathEscaped="$PROJECT_DIR$/../2-PolarGraphs-dynamite/.idea/test-PolarGraphs-3.iml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/workspace.xml" beforePathEscaped="$PROJECT_DIR$/../2-PolarGraphs-dynamite/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/2-PolarGraphs-dynamite/.idea/workspace.xml" afterPathEscaped="$PROJECT_DIR$/../2-PolarGraphs-dynamite/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/.gitignore" beforePathEscaped="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/3-sinFlower/.idea/test-sinFlower.iml" beforePathEscaped="$PROJECT_DIR$/.idea/test-sinFlower.iml" beforeDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/.gitignore" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/.gitignore" beforeDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/codeStyles/codeStyleConfig.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
       <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/4-algorithm-dynamiteLines/.idea/inspectionProfiles/profiles_settings.xml" beforePathEscaped="$PROJECT_DIR$/../4-algorithm-dynamiteLines/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
@@ -37,7 +37,7 @@
     <other-services-enabled>true</other-services-enabled>
     <auto-save>true</auto-save>
   </component>
-  <component name="ProjectId" id="1kC7GMZBkkjPAHv43r7S6Cx2h9B" />
+  <component name="ProjectId" id="1kC2XYjdmku5lIJlQ2ff6KKVOl4" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -53,26 +53,16 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager">
-    <configuration name="index.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/2-PolarGraphs-dynamite/index.html" useBuiltInWebServerPort="true">
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="JavaScript Debug.index.html" />
-      </list>
-    </recent_temporary>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="096f6d47-fdde-4141-baee-a62af7bbb4ac" name="Default Changelist" comment="" />
-      <created>1605192623079</created>
+      <changelist id="d6e6cdd4-ff07-4912-addc-0bf6ab4ee795" name="Default Changelist" comment="" />
+      <created>1605190293278</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1605192623079</updated>
-      <workItem from="1605192624180" duration="319000" />
-      <workItem from="1605193200454" duration="5000" />
+      <updated>1605190293278</updated>
+      <workItem from="1605190294399" duration="513000" />
+      <workItem from="1605193224565" duration="5000" />
     </task>
     <servers />
   </component>

@@ -1,22 +1,16 @@
-// This is where we are going to store the mouse information
-var mouseX =175;
-var mouseY =25;
+
 // We really need this
 var TWO_PI = Math.PI * 2;
 
-// This gets a reference to the canvas in the browser
 
 var canvas = document.querySelector("canvas");
 
-// This sets the width and height to the document window
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-// Be aware that when you resize the window, you will need to call (do) this again
+var mouseX =canvas.width/2;
+var mouseY =canvas.height/2;
 
-// This creates a 2d drawing 'context' in your canvas
-// All your drawing will be done in this canvas
 var context = canvas.getContext("2d");
-
 //This tells the browser to get the mouse information from the function we've called getMouse
 canvas.addEventListener('mousemove', getMouse, false);
 
@@ -26,33 +20,53 @@ function getMouse(mousePosition) {
     mouseY = mousePosition.layerY;
 }
 
+var segments = Math.floor(Math.random()*1000);
+var positionBaseX = canvas.width/2;
+var positionBaseY = canvas.height/2;
+
 // This function translates the canvas so that we're looking at it from a different position, meaning that 0,0 is somewhere else
 function draw() {
 
-    var segments = 1000;
+    //var segments = Math.floor(Math.random()*1000);
     var spacing = TWO_PI / segments;
     var radius = 200;
     //clear the screen
     context.clearRect(0,0, canvas.width, canvas.height);
 
-    //draw circles
+    //draw a circle with Path2D
+    var ellipse = new Path2D();
+    ellipse.arc(positionBaseX, positionBaseY, 25, 0, 2 * Math.PI);
+    context.stroke(ellipse);
 
-    context.beginPath();
+    //var jwCircle = new Path2D();//fail, cannot save the path as path2D
+    drawJW(mouseX,mouseY,radius,spacing);
 
-    for (var i = 0; i < segments; i++) {
 
-        context.strokeStyle = "#FF0000"; //set the line colour to black
-        var x = Math.sin(spacing * i * (mouseX/50)) * Math.cos(spacing * i * (mouseY/50)) * radius;
-        var y = Math.sin(spacing * i* (mouseX/50)) * Math.sin(spacing * i * (mouseY/50)) * radius;
 
-        context.lineTo(x+radius,y+radius);
-    }
-
-    context.stroke(); //draw the outline
-    context.closePath();
     requestAnimationFrame(draw);
 }
 
 //request the first animation frame
 requestAnimationFrame(draw);
 //the end.
+
+function drawJW(x,y,r,spacing){
+    var jwRadius = Math.random()*r;
+    var jwCircle = new Path2D();
+    //var segments = Math.floor(Math.random()*1000);
+    context.save();//like push()
+    context.translate(x, y);
+    context.beginPath();
+    for (var i = 0; i < segments; i++) {
+        var hue = Math.floor(Math.random()*255);
+        context.strokeStyle = 'hsl('+hue+', 90%, 70%)';//"#FF0000"; //set the line colour to black
+        var xJW = Math.sin(spacing * i * (mouseX/50)) * Math.cos(spacing * i * (mouseY/50)) * jwRadius - jwRadius;
+        var yJW = Math.sin(spacing * i* (mouseX/50)) * Math.sin(spacing * i * (mouseY/50)) * jwRadius - jwRadius;
+
+        context.lineTo(xJW+jwRadius,yJW+jwRadius);
+    }
+    context.stroke(); //draw the outline
+    context.closePath();
+    context.restore();//like pop()
+
+}
