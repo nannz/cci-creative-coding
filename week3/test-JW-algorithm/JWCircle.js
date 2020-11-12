@@ -6,11 +6,16 @@ class JWCircle{
         this.segments = Math.floor(Math.random()*1000);
         this.spacing =TWO_PI / this.segments;
         this.hue = Math.floor(Math.random()*255);
-        this.r = Math.random()*r;
+        this.baseR = Math.random()*r;
+        this.r = this.baseR;
+        this.val = Math.random()*0.02;
     }
     display(){
+        //size is changing based on a sin value
+        this.r = this.baseR*(1+Math.abs(Math.sin(frameCount*this.val)));
         context.save();
         context.translate(this.centreX,this.centreY);
+        context.rotate(frameCount*0.01);// Date.getMilliseconds()
         context.beginPath();
         for (var i = 0; i < segments; i++) {
             context.strokeStyle = 'hsl('+this.hue+', 90%, 70%)';//"#FF0000"; //set the line colour to black

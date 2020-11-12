@@ -20,13 +20,8 @@ function getMouse(mousePosition) {
     mouseX = mousePosition.layerX;
     mouseY = mousePosition.layerY;
 }
+var frameCount = 0;
 var jwCircles = [];//new Array(5);
-// This function translates the canvas so that we're looking at it from a different position, meaning that 0,0 is somewhere else
-// for(var i = 0; i<5; i ++){
-//     var jwCircle = new JWCircle(mouseX, mouseY, 200);
-//     jwCircles.push(jwCircle);
-// }
-
 
 //mouseClick, add a new jwCircles
 function mouseClick(){
@@ -55,7 +50,7 @@ function draw() {
         jwCircle.display();
     });
 
-
+    frameCount ++;
     requestAnimationFrame(draw);
 }
 
