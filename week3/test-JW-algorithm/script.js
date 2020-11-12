@@ -22,9 +22,10 @@ function getMouse(mousePosition) {
 }
 var frameCount = 0;
 var jwCircles = [];//new Array(5);
-
+var showInstruction = true;
 //mouseClick, add a new jwCircles
 function mouseClick(){
+    showInstruction = false;
     var jwCircle = new JWCircle(mouseX, mouseY, 200);
     jwCircles.push(jwCircle);
 }
@@ -38,16 +39,18 @@ var segments = Math.floor(Math.random()*1000);
 
 function draw() {
 
-    //var segments = Math.floor(Math.random()*1000);
-    // var spacing = TWO_PI / segments;
-    var radius = 200;
     //clear the screen
     context.clearRect(0,0, canvas.width, canvas.height);
+    //the instruction
+    if(showInstruction){
+        context.font = '48px serif';
+        context.fillText('Try Clicking', canvas.width/2, canvas.height/2);
+    }
 
     //drawJW(mouseX,mouseY,radius,spacing);
-
     jwCircles.forEach(jwCircle=>{
         jwCircle.display();
+        //jwCircle.displayCircles();
     });
 
     frameCount ++;
