@@ -5,7 +5,7 @@ var imageObj = new Image();
 imageObj.onload = function(){
     console.log('image loaded');
 };
-imageObj.src = "pic.jpg";
+imageObj.src = "pic2.jpg";
 var canvas = document.getElementById('myCanvas');
 var canvas2 = document.getElementById('myCanvas2');
 canvas.addEventListener('mousemove', getMouse, false);
@@ -37,6 +37,22 @@ var draw = function() {
     var G = 0;
     var B = 0;
     var luminance = 0.0;
+    var mouseModLuminance = mouseX/imageWidth;
+    var sv = 2*(mouseModLuminance); // saturation value. 0 = grayscale, 1 = original
+    var luR = 0.3086; // constant to determine luminance of red. Similarly, for green and blue
+    var luG = 0.6094;
+    var luB = 0.0820;
+    var az = (1 - sv)*luR + sv;
+    var bz = (1 - sv)*luG;
+    var cz = (1 - sv)*luB;
+    var dz = (1 - sv)*luR;
+    var ez = (1 - sv)*luG + sv;
+    var fz = (1 - sv)*luB;
+    var gz = (1 - sv)*luR;
+    var hz = (1 - sv)*luG;
+    var iz = (1 - sv)*luB + sv;
+
+
     for(var i = 0; i < imageHeight; i++) {//y
         // loop through each row
         for(var j = 0; j < imageWidth; j++) {//x
@@ -48,11 +64,18 @@ var draw = function() {
             R = data[((imageWidth * i) + j) * 4];
             G = data[((imageWidth * i) + j) * 4 + 1];
             B = data[((imageWidth * i) + j) * 4 + 2];
-            luminance = 0.2126*R + 0.7152*G + 0.0722*B;
+            //luminance Algorithm: https://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
+            luminanceSub = luminance/2*(1-mouseModLuminance);
+            //luminance
+            imageData2.data[((imageWidth * i) + j) * 4] = R*az + G*bz + B*cz;//R*mouseModLuminance*2 + luminanceSub;
+            imageData2.data[((imageWidth * i) + j) * 4+1] = R*dz + G*ez + B*fz;//G*mouseModLuminance*2 +  luminanceSub;
+            imageData2.data[((imageWidth * i) + j) * 4+2] = R*gz + G*hz + B*iz;//B*mouseModLuminance*2 +  luminanceSub;
+            // This is the alpha - it makes stuff disappear.So perhaps leave this one alone unless you want the image to fade away
+            imageData2.data[((imageWidth * i) + j) * 4+3] = data[((imageWidth * i) + j) * 4 + 3];
 
             //pixelThreshold(i,j);
             //pixelBrightness(i,j,mouseModBrightness);
-            pixelContrast(i,j,mouseModContrast,contrastSub);
+            //pixelContrast(i,j,mouseModContrast,contrastSub);
 
         }
     }
