@@ -64,9 +64,9 @@ var draw = function() {
             R = data[((imageWidth * i) + j) * 4];
             G = data[((imageWidth * i) + j) * 4 + 1];
             B = data[((imageWidth * i) + j) * 4 + 2];
-            //luminance Algorithm: https://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
+            //luminance&saturation Algorithm: https://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
             luminanceSub = luminance/2*(1-mouseModLuminance);
-            //luminance
+            //luminance&saturation
             imageData2.data[((imageWidth * i) + j) * 4] = R*az + G*bz + B*cz;//R*mouseModLuminance*2 + luminanceSub;
             imageData2.data[((imageWidth * i) + j) * 4+1] = R*dz + G*ez + B*fz;//G*mouseModLuminance*2 +  luminanceSub;
             imageData2.data[((imageWidth * i) + j) * 4+2] = R*gz + G*hz + B*iz;//B*mouseModLuminance*2 +  luminanceSub;
