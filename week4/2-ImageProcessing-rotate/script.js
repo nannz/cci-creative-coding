@@ -21,20 +21,29 @@ var imageData = context2.getImageData(0, 0, imageWidth, imageHeight);
 var data = imageData.data;
 var imageData2 = context.getImageData(0, 0, imageWidth, imageHeight);
 //var imageData2 = imageData;
-
+var zoomX = 1;
+var zoomY = 1;
+var offsetX = 0;
+var offsetY = 0;
+var anchorX = imageWidth/2;
+var anchorY = imageHeight/2;
 
 var draw = function() {
-
+    var theta = mouseX / imageWidth * Math.PI * 2;
+    zoomX = (mouseY-(mouseY/2)) * 0.1;
+    zoomY = (mouseY-(mouseY/2)) * 0.15;
 
     for(var i = 0; i < imageHeight; i++) {//y
         // loop through each row
         for(var j = 0; j < imageWidth; j++) {//x
 
-            imageData2.data[((imageWidth * i) + j) * 4] = data[((imageWidth * i) + j) * 4];
-            imageData2.data[((imageWidth * i) + j) * 4+1] = data[((imageWidth * i) + j) * 4 + 1];
-            imageData2.data[((imageWidth * i) + j) * 4+2] = data[((imageWidth * i) + j) * 4 + 2];
-            imageData2.data[((imageWidth * i) + j) * 4+3] = data[((imageWidth * i) + j) * 4 + 3];
+            var x = Math.floor((Math.cos(theta)/zoomX) * (j-(offsetX+anchorX)) - (Math.sin(theta)/zoomY) * (i-(offsetY+anchorY)))+anchorX;
+            var y = Math.floor((Math.sin(theta)/zoomX) * (j-(offsetX+anchorX)) + (Math.cos(theta)/zoomY) * (i-(offsetY+anchorY)))+anchorY;
 
+            imageData2.data[((imageWidth * i) + j) * 4] = data[((imageWidth * y) + x) * 4];
+            imageData2.data[((imageWidth * i) + j) * 4+1] = data[((imageWidth * y) + x) * 4 + 1];
+            imageData2.data[((imageWidth * i) + j) * 4+2] = data[((imageWidth * y) + x) * 4 + 2];
+            imageData2.data[((imageWidth * i) + j) * 4+3] = data[((imageWidth * y) + x) * 4 + 3];
         }
     }
 
