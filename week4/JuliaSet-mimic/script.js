@@ -38,29 +38,30 @@ var draw = function() {
         for (var j = -(width / 2); j < width / 2; j += res) {//...run through all the y pixels
             //cx=i/(width/4);//adjust the values of x so that it is between -2 and 2, as this is where the mandelbrot is!!
             //cy=j/(width/4);//same for y. These two lines have given us the complex number c, which is just (cx,cy)
-            //mandel set: my way of doing the mapping
+
+            //mandel set: doing the mapping
             //cx = map(i, -(width / 2), width / 2, minVal, maxVal);//originally -2 to 2
             //cy = map(j, -(width / 2), width / 2, minVal, maxVal);//originally -2 to 2
-            var a = map(i, -(width / 2), width / 2, minVal, maxVal);
-            var b = map(j, -(width / 2), width / 2, minVal, maxVal);
-            var ca = a;
-            var cb = b;
-
+            //if doing var cx and cy, it has a strangely better performance.
+            var cx = map(i, -(width / 2), width / 2, minVal, maxVal);
+            var cy = map(j, -(width / 2), width / 2, minVal, maxVal);
+            //var ca = a;//for mandel set
+            //var cb = b;//for mandel set
 
             //use while loop to do the julia
             //and the while loop can record the testNum, in which I can make it
             //black in the centre..
-            //if does so in a for loop, i need another variable to hold the value...
+            //if does so in a for loop, i may need another variable to hold the value...
             var testNum = 0;
             while(testNum < maxIterations){
-                var aa = (a * a) - (b * b);//x
-                var bb = 2 * a * b;//y
+                var x = (cx * cx) - (cy * cy);//x
+                var y = 2 * cx * cy;//y
                 //instead of add z and y with cx, cy, we just add the julia number
                 //there are tons of julia number sets on the wikipedia
-                a = aa + ja;//ca;//- 0.7269
-                b = bb + jb;//cb;//- 0.1889
+                cx = x + ja;//ca;//- 0.7269
+                cy = y + jb;//cb;//- 0.1889
 
-                if ((a*a + b*b)>16){// this equals "Math.sqrt(x^2 + y^2)", means the distance from the point to the centre point is less than 4(Math.sqrt(16))
+                if ((cx*cx + cy*cy)>16){// this equals "Math.sqrt(x^2 + y^2)", means the distance from the point to the centre point is less than 4(Math.sqrt(16))
                     //console.log(a+" "+ b);
                     //console.log(testNum);//all zero
                     break;
@@ -68,10 +69,10 @@ var draw = function() {
                 testNum ++;
             }
 
-
             //var norm = map(testNum, 0, maxIterations, 0,1);
             //var bright = map(Math.sqrt(norm), 0, 1, 0, 255);
             var bright = map(testNum, 0, maxIterations, 0, 255);
+            var r = map(testNum, 0, maxIterations, 0, 360);//Math.sqrt(testNum.toFixed(2)/maxIterations);
             //do the pixel drawing, i-x;j-y
             var pixel = ((i + width/2) + (j+width/2)*width)*4;
             if(testNum === maxIterations){
@@ -80,9 +81,9 @@ var draw = function() {
                 imageData.data[pixel+2] = 0;
                 imageData.data[pixel+3] = 255;
             }else{
-                imageData.data[pixel] = bright;
-                imageData.data[pixel+1] = bright;
-                imageData.data[pixel+2] = bright;
+                imageData.data[pixel] = r;//bright;
+                imageData.data[pixel+1] = 50;//bright;
+                imageData.data[pixel+2] = 80;//bright;
                 imageData.data[pixel+3] = 255;
             }
         }
