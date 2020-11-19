@@ -13,8 +13,8 @@ canvas.setAttribute("height", height);
 var z,zx,zy=0;//So these are variables that hold the absolute value of z, and the x and y coordinates that we use to represent z
 var cx,cy=0;//These are variables we use to represent the complex number c - which is a pixel location.
 //for julia set below:
-var ca = -0.7269;
-var cb = -0.1889;
+var ja = -0.7269;
+var jb = -0.1889;
 
 var maxIterations=50;//We calculate the fractal by running a test over and over again for each pixel. The size of this number is the maximum number of tests
 var res=1;//2;
@@ -90,8 +90,8 @@ var draw = function() {
                 var bb = 2 * a * b;//y
                 //instead of add z and y with cx, cy, we just add the julia number
                 //there are tons of julia number sets on the wikipedia
-                a = aa + ca;//- 0.7269;
-                b = bb + cb;//- 0.1889;
+                a = aa + - 0.7269;//ca;//
+                b = bb + - 0.1889;//cb;//
 
                 if ((a*a + b*b)>16){// this equals "Math.sqrt(x^2 + y^2)", means the distance from the point to the centre point is less than 4(Math.sqrt(16))
                     //console.log(a+" "+ b);
