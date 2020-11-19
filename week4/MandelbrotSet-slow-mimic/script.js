@@ -4,8 +4,8 @@ var mouseY = 1;
 var canvas = document.querySelector("canvas");
 canvas.addEventListener('mousemove', getMouse, false);
 
-var width = 400;//window.innerWidth;
-var height = 400;//window.innerHeight;
+var width = 600;//window.innerWidth;
+var height = 600;//window.innerHeight;
 var context = canvas.getContext("2d");
 canvas.setAttribute("width", width);
 canvas.setAttribute("height", height);
@@ -25,13 +25,13 @@ var imageHeight = height;
 var imageData = context.getImageData(0, 0, imageWidth, imageHeight);
 
 context.translate(width*0.5,height*0.5);//As always with proper stuff, we translate so that 0,0 is in the middle.
-var mouseMapped_min = -2.5;
-var mouseMapped_max = 2.5;
+var mouseMapped_min = -2;
+var mouseMapped_max = 2;
 
 //function draw() {
 var draw = function() {
-    mouseMapped_min = map(mouseX, 0, width, -2.5,0);
-    mouseMapped_max = map(mouseY, 0, width, 2.5, 0);
+    mouseMapped_min = map(mouseX, 0, width, -2,0);
+    mouseMapped_max = map(mouseY, 0, width, 2, 0);
     minVal = mouseMapped_min;
     maxVal = mouseMapped_max;
     // console.log(mouseMapped);
@@ -55,8 +55,9 @@ var draw = function() {
                     zy = y + cy;//and then add cy to y to get the next value of zy
                     z = Math.sqrt((zx * zx) + (zy * zy));//Now we get the square of the absolute value of z so that we can see if it's over 2 the next time we run the test. If it is, we don't do anything
 
-                    var greyScaleMap = map(test, 0, maxIterations, 0, 1);
-                    greyScale = map(Math.sqrt(greyScaleMap),0,1,0,255 );
+                    greyScale = map(test, 0, maxIterations, 0, 255);
+                    //var greyScaleMap = map(test, 0, maxIterations, 0, 1);
+                    //greyScale = map(Math.sqrt(greyScaleMap),0,1,0,255 );
 
                     col = 255 - (255 / maxIterations) * test;
                     //context.fillStyle = 'rgb(' + col + ',' + col + ',' + col + ')';//the colour we use depends on how many tests we had to do before the value of z got bigger than 2.
@@ -72,10 +73,6 @@ var draw = function() {
                 z = 0;
                 zx = 0;
                 zy = 0;
-                //var brightness = map(n,0,100,0,255);
-                //context.fillStyle = 'rgb(' + brightness + ',' + brightness + ',' + brightness + ')';
-
-                //requestAnimationFrame(draw);
 
             //do the pixel drawing, i-x;j-y
             var pixel = ((i + width/2) + (j+width/2)*width)*4;
