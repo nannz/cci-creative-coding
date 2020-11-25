@@ -53,12 +53,12 @@ function draw() {
 
         var latitude = map(i, 0, dim, - Math.PI/2, Math.PI/2);//wei du
         //var s = size * Math.sin(spacing /2 * i);//i);// Calculate the size of the current ring
-        var r1 = superShape(latitude,7,0.2,1.7,1.7);
+        var r2 = superShape(latitude,7,0.2,1.7,1.7);
 
         for (var j = 0; j < dim; j++ ) {//dim; j++ ) {// For each ring..
             var longitude = map(j, 0, dim, - Math.PI, Math.PI);//jing du
             // ...create the next point in the circle at the current size s, at the current depth z
-            var r2 = superShape(longitude,7,0.2,1.7,1.7);
+            var r1 = superShape(longitude,7,0.2,1.7,1.7);
             //var point = [Math.cos(spacing * j) * s,Math.sin(spacing * j) * s,z];
             x = size * r1 * Math.cos(longitude) * r2 * Math.cos(latitude);
             y = size * r1 * Math.sin(longitude) * r2 * Math.cos(latitude);
@@ -119,8 +119,16 @@ function draw() {
 
 requestAnimationFrame(draw);
 
+//http://paulbourke.net/geometry/supershape/
+var a = 1; //a can be changed each frame
+var b = 1;
 function superShape(angle, m, n1, n2, n3){
-    var r = 1;
+    var t1 = Math.abs((1/a)* Math.cos(m*angle / 4));
+    t1 = Math.pow(t1, n2);
+    var t2 = Math.abs((1/b)*Math.sin(m*angle / 4));
+    t2 = Math.pow(t2, n3);
+    var t3 = t1 + t2;
+    var r = Math.pow(t3, (-1)/n1);
     return r;
 }
 function rotateX(point3d,angleX) {
