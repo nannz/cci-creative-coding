@@ -51,10 +51,10 @@ var resultTest = matrixMul(projection, pointTest);
 //console.log(resultTest);
 
 //build the sphere and add it to the points array
+//https://en.wikipedia.org/wiki/Spherical_coordinate_system
 for (var i = 0; i < dim; i ++){
     var latitude = map(i, 0, dim, 0, Math.PI);//wei du
     var z = r * Math.cos(latitude);
-
     for (var j = 0; j< dim; j ++){
         var longitude = map(j, 0, dim, 0, Math.PI * 2);//jing du
         var x = r * Math.sin(latitude) * Math.cos(longitude);
@@ -167,50 +167,6 @@ function draw() {
     }
     requestAnimationFrame(draw);
 }
-
-/*
-    //the original way of drawing
-    for (var w = 0; w < numPoints; w++) {
-        point3d = points[w];
-
-        //if for testing
-        if(w == 0){
-            var projected2d = matrixMul(projection, point3d);
-        }
-        z3d = point3d[2];
-        if (z3d < -fov) z3d += 0;
-        point3d[2] = z3d;
-
-        //mouse interaction for rotating
-        rotateX(point3d,angleX);
-        rotateY(point3d,angleY);
-
-        x3d = point3d[0];
-        y3d = point3d[1];
-        z3d = point3d[2];
-        var scale = (fov / (fov + z3d));
-
-        var x2d = (x3d * scale) + HALF_WIDTH ;//  / 2;
-        var y2d = (y3d * scale) + HALF_HEIGHT;
-
-        //draw the individual dots (format as lines) - MIMIC from the example
-        context.lineWidth = scale;
-        context.strokeStyle = "rgb(255,255,255)";
-        context.beginPath();
-        context.moveTo(x2d, y2d);
-        context.lineTo(x2d + scale*1, y2d);
-        //context.closePath();
-        context.stroke();
-    }
-
-    // points.forEach(function(point){
-    //     //something code here.
-    // });
-
-    requestAnimationFrame(draw);
-}
-
- */
 
 requestAnimationFrame(draw);
 
