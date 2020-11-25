@@ -45,7 +45,7 @@ var resultTest = matrixMul(projection, pointTest);
 //build the sphere and add it to the points array
 for (var i = 0; i < dim; i ++){
     var latitude = map(i, 0, dim, 0, Math.PI);//wei du
-    var z = r * Math.cos(latitude);//?????
+    var z = r * Math.cos(latitude);
 
     for (var j = 0; j< dim; j ++){
         var longitude = map(j, 0, dim, 0, Math.PI * 2);//jing du
@@ -55,6 +55,7 @@ for (var i = 0; i < dim; i ++){
         points.push(point);
     }
 }
+console.log(points.length);
 
 //translate to the centre
 //context.translate(HALF_WIDTH,HALF_HEIGHT);
@@ -70,14 +71,18 @@ function draw() {
 
 
     //try another way to do the drawing, like two-dimensional arrays
-    for (var i = 0; i < dim - 1; i++) {
-        //context.beginPath();
+    for (var i = 0; i < dim; i++) {
+        context.beginPath();
         context.strokeStyle = "rgb(255,255,255)";
+        context.fillStyle = "rgb(255,255,255)";
 
-        for (var j = 0; j < dim; j++) {
+        for (var j = 0; j < dim-1; j++) {
             var index = j + i * dim;
             var index2 = j + (i + 1) * dim;//the one below
+            if(index2>=400)index2 = 399;
             var index3 = index + 1;//the one on the right
+            if(index3>=400)index3 = 399;
+
             //the three points to connect as a triangle
             point3d = points[index];
             point3d2 = points[index2];
@@ -92,12 +97,6 @@ function draw() {
             point3d[2] = z3d;
             point3d2[2] = z3d2;
             point3d3[2] = z3d3;
-
-            //mouse interaction for rotating
-            rotateX(point3d, angleX);
-            rotateY(point3d, angleY);
-            rotateX(point3d2,angleX);
-            rotateY(point3d2, angleY);
 
             //convert 3d to 2d points, with matrixMultiplication,
             var point2d = matrixMul(projection,point3d);//threeDtoTwoD(point3d, fov);
@@ -125,13 +124,19 @@ function draw() {
             context.moveTo(x2d, y2d);
             context.lineTo(x2d2, y2d2);
             context.lineTo(x2d3, y2d3);
-            //context.lineTo(x2d2, y2d2);
+            //context.lineTo(x2d, y2d);
             context.closePath();
             context.restore();
             context.stroke();
         }
-        //context.closePath();
+        context.closePath();
         //context.stroke();
+    }
+    //mouse interaction and rotation
+    for (var w = 0; w < numPoints; w++) {
+        point3d = points[w];
+        rotateX(point3d,angleX);
+        rotateY(point3d,angleY);
     }
     requestAnimationFrame(draw);
 }
