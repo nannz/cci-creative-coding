@@ -74,42 +74,49 @@ function draw() {
 
 
     //for mouse rotating interaction
+    //maybe some improve on the rotation algorithm
     angleX = 0.1 * ((mouseX / width) - 0.5) / 4;
     angleY = 0.1 * ((mouseY / height) - 0.5) / 4;
 
 
     //try another way to do the drawing, like two-dimensional arrays
     for (var i = 0; i < dim; i++) {
-        context.beginPath();
-        context.strokeStyle = "rgb(255,255,255)";
+       // context.beginPath();
+        context.strokeStyle = "rgb(0,0,0)";
         context.fillStyle = "rgb(255,255,255)";
 
-        for (var j = 0; j < dim-1; j++) {
+        for (var j = 0; j < dim-1; j++) { //also need to record the i=0;j=0, and link the point with j = dim-1
             var index = j + i * dim;
             var index2 = j + (i + 1) * dim;//the one below
-            if(index2>=400)index2 = 399;
+            if(index2>=numPoints)index2 = numPoints-1;
             var index3 = index + 1;//the one on the right
-            if(index3>=400)index3 = 399;
+            if(index3>=numPoints)index3 = numPoints-1;
+            var index4 = index2 - 1;
+            if(index4>=numPoints)index4 = numPoints-1;
+            if(index4<0)index4=0;
 
             //the three points to connect as a triangle
-            point3d = points[index];
-            point3d2 = points[index2];
-            point3d3 = points[index3];
-
+            point3d = points[index];//the point now
+            point3d2 = points[index2];//the point below
+            point3d3 = points[index3];//the point on the right
+            point3d4 = points[index4];//the point below - 1
             z3d = point3d[2];
             z3d2 = point3d2[2];
             z3d3 = point3d3[2];
+            z3d4 = point3d4[2];
             if (z3d < -fov) z3d += 0;
             if (z3d2 < -fov) z3d2 += 0;
             if (z3d3 < -fov) z3d3 += 0;
             point3d[2] = z3d;
             point3d2[2] = z3d2;
             point3d3[2] = z3d3;
+            point3d4[2] = z3d4;
 
             //convert 3d to 2d points, with matrixMultiplication,
             var point2d = matrixMul(projection,point3d);//threeDtoTwoD(point3d, fov);
             var point2d2 = matrixMul(projection,point3d2);//threeDtoTwoD(point3d2, fov);
             var point2d3 = matrixMul(projection,point3d3);//threeDtoTwoD(point3d3, fov);
+            var point2d4 = matrixMul(projection,point3d4);
             x3d = point3d[0];
             y3d = point3d[1];
             z3d = point3d[2];
@@ -120,34 +127,42 @@ function draw() {
             var y2d2 = point2d2[1];
             var x2d3 = point2d3[0];
             var y2d3 = point2d3[1];
-
+            var x2d4 = point2d4[0];
+            var y2d4 = point2d4[1];
 
             //i need to convert 3d values into 2d values for context.lineTo()!
             context.lineWidth = scale;
-
             //draw the triangle strips!
             context.save();
             context.translate(HALF_WIDTH,HALF_HEIGHT);
+            ////the first tri, here-down-upright
             context.beginPath();
             context.moveTo(x2d, y2d);
             context.lineTo(x2d2, y2d2);
             context.lineTo(x2d3, y2d3);
             context.closePath();
-            context.restore();
-            if(i%2 === 0 || j%2 === 0){
-                context.fill();
-            }else{
-                context.stroke();
-            }
+            //context.fillStyle = "rgb(255,255,255)";
             context.fill();
+
+            //droaw the second tri
+            context.beginPath();
+            context.moveTo(x2d, y2d);
+            context.lineTo(x2d2, y2d2);
+            context.lineTo(x2d4, y2d4);
+            context.closePath();
+            //context.fillStyle = "rgb(0,255,255)";
+            context.fill();
+            context.restore();
+
+            context.stroke();
         }
-        context.closePath();
+        //context.closePath();
         //context.stroke();
     }
     //mouse interaction and rotation
     for (var w = 0; w < numPoints; w++) {
         point3d = points[w];
-        rotateX(point3d,angleX);
+        rotateX(point3d,angleX);//the rotation algorithm needs to improve.
         rotateY(point3d,angleY);
     }
     requestAnimationFrame(draw);
