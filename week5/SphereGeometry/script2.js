@@ -1,3 +1,11 @@
+//progress
+//1.matrix multiplication method
+//2.draw the triangle strips by calculating the point below and the point beside
+
+//wait to update
+//1. debug the empty strip
+//2. apply the formula
+
 var fov = 300;//can be variable
 
 var canvas = document.querySelector("canvas");
@@ -124,10 +132,14 @@ function draw() {
             context.moveTo(x2d, y2d);
             context.lineTo(x2d2, y2d2);
             context.lineTo(x2d3, y2d3);
-            //context.lineTo(x2d, y2d);
             context.closePath();
             context.restore();
-            context.stroke();
+            if(i%2 === 0 || j%2 === 0){
+                context.fill();
+            }else{
+                context.stroke();
+            }
+            context.fill();
         }
         context.closePath();
         //context.stroke();
@@ -184,8 +196,6 @@ function draw() {
 }
 
  */
-
-
 
 requestAnimationFrame(draw);
 
@@ -268,20 +278,5 @@ function matrixMul(a, b){//a is the matrix, b is the point3d. in this case
     var sum2 = a[1][0]*b[0] + a[1][1]*b[1]+ a[1][2]*b[2];
     var result = [sum1, sum2];
     return result;
-    // var result = [rowsA];//new Array(rowsA);
-    // result.forEach(function(r){
-    //     r =  [colsB];//new Array(colsB);
-    // });
-    // console.log(result);
-    //
-    // for(var i = 0; i < rowsA; i ++){
-    //     for (var j = 0; j < colsB; j++){
-    //         var sum = 0;
-    //         for(var k = 0; k < colsB; k ++){
-    //             sum = sum +  a[i][k] * b[k][j];
-    //         }
-    //         //result[i][j] = sum;
-    //     }
-    // }
-    //return null;
+
 }
