@@ -25,6 +25,12 @@ var point3d3 = [];
 var x3d = 0;
 var y3d = 0;
 var z3d = 0;
+var x3d2 = 0;
+var y3d2 = 0;
+var z3d2 = 0;
+var x3d3 = 0;
+var y3d3 = 0;
+var z3d3 = 0;
 
 //for getting the projected in 2d from the 3d points
 //https://en.wikipedia.org/wiki/3D_projection
@@ -34,7 +40,7 @@ var projection = [
 ]
 var pointTest = [100, 10, 50];
 var resultTest = matrixMul(projection, pointTest);
-console.log(resultTest);
+//console.log(resultTest);
 
 //build the sphere and add it to the points array
 for (var i = 0; i < dim; i ++){
@@ -59,59 +65,86 @@ function draw() {
 
 
     //for mouse rotating interaction
-    angleX=0.1* ((mouseX/width)-0.5)/4;
-    angleY=0.1* ((mouseY/height)-0.5)/4;
+    angleX = 0.1 * ((mouseX / width) - 0.5) / 4;
+    angleY = 0.1 * ((mouseY / height) - 0.5) / 4;
 
-    /*
+
     //try another way to do the drawing, like two-dimensional arrays
-    for (var i = 0; i < dim-1; i ++){
-        context.beginPath();
+    for (var i = 0; i < dim - 1; i++) {
+        //context.beginPath();
         context.strokeStyle = "rgb(255,255,255)";
-        for(var j = 0; j < dim; j ++){
-            var index = j + i*dim;
-            var index2 = j + (i+1)*dim;
-            var index3 = index +1;
+
+        for (var j = 0; j < dim; j++) {
+            var index = j + i * dim;
+            var index2 = j + (i + 1) * dim;//the one below
+            var index3 = index + 1;//the one on the right
+            //the three points to connect as a triangle
             point3d = points[index];
             point3d2 = points[index2];
             point3d3 = points[index3];
-            z3d = point3d[2];
 
+            z3d = point3d[2];
+            z3d2 = point3d2[2];
+            z3d3 = point3d3[2];
             if (z3d < -fov) z3d += 0;
+            if (z3d2 < -fov) z3d2 += 0;
+            if (z3d3 < -fov) z3d3 += 0;
             point3d[2] = z3d;
+            point3d2[2] = z3d2;
+            point3d3[2] = z3d3;
+
             //mouse interaction for rotating
-            rotateX(point3d,angleX);
-            rotateY(point3d,angleY);
+            rotateX(point3d, angleX);
+            rotateY(point3d, angleY);
+            rotateX(point3d2,angleX);
+            rotateY(point3d2, angleY);
+
+            //convert 3d to 2d points, with matrixMultiplication,
+            var point2d = matrixMul(projection,point3d);//threeDtoTwoD(point3d, fov);
+            var point2d2 = matrixMul(projection,point3d2);//threeDtoTwoD(point3d2, fov);
+            var point2d3 = matrixMul(projection,point3d3);//threeDtoTwoD(point3d3, fov);
             x3d = point3d[0];
             y3d = point3d[1];
             z3d = point3d[2];
             var scale = (fov / (fov + z3d));
-            var x2d = (x3d * scale) + HALF_WIDTH ;//  / 2;
-            var y2d = (y3d * scale) + HALF_HEIGHT;
+            var x2d = point2d[0];//(x3d * scale) + HALF_WIDTH;//  / 2;
+            var y2d = point2d[1];//(y3d * scale) + HALF_HEIGHT;
+            var x2d2 = point2d2[0];
+            var y2d2 = point2d2[1];
+            var x2d3 = point2d3[0];
+            var y2d3 = point2d3[1];
+
 
             //i need to convert 3d values into 2d values for context.lineTo()!
-            //connectTri(projected);
             context.lineWidth = scale;
-            //context.moveTo(x3d,);//point3d1
-            //context.lineTo();//point3d2
-            //context.lineTo();//point3d3
-        }
-        context.closePath();
-        context.stroke();
-    }
-     */
 
+            //draw the triangle strips!
+            context.save();
+            context.translate(HALF_WIDTH,HALF_HEIGHT);
+            context.beginPath();
+            context.moveTo(x2d, y2d);
+            context.lineTo(x2d2, y2d2);
+            context.lineTo(x2d3, y2d3);
+            //context.lineTo(x2d2, y2d2);
+            context.closePath();
+            context.restore();
+            context.stroke();
+        }
+        //context.closePath();
+        //context.stroke();
+    }
+    requestAnimationFrame(draw);
+}
+
+/*
     //the original way of drawing
     for (var w = 0; w < numPoints; w++) {
         point3d = points[w];
 
         //if for testing
         if(w == 0){
-            //var projected2d = matrixMul(projection, point3d);
+            var projected2d = matrixMul(projection, point3d);
         }
-
-
-
-
         z3d = point3d[2];
         if (z3d < -fov) z3d += 0;
         point3d[2] = z3d;
@@ -126,7 +159,6 @@ function draw() {
         var scale = (fov / (fov + z3d));
 
         var x2d = (x3d * scale) + HALF_WIDTH ;//  / 2;
-        //var x2d =x3d + HALF_WIDTH ;
         var y2d = (y3d * scale) + HALF_HEIGHT;
 
         //draw the individual dots (format as lines) - MIMIC from the example
@@ -137,8 +169,6 @@ function draw() {
         context.lineTo(x2d + scale*1, y2d);
         //context.closePath();
         context.stroke();
-
-        //
     }
 
     // points.forEach(function(point){
@@ -147,6 +177,10 @@ function draw() {
 
     requestAnimationFrame(draw);
 }
+
+ */
+
+
 
 requestAnimationFrame(draw);
 
@@ -206,13 +240,20 @@ function constrain(n, low, high){
     return Math.max(Math.min(n, high), low);
 }
 
+//3d to 2d
+function threeDtoTwoD(point3d, fov){
+    var scale = (fov / (fov + point3d[2]));
+    var x2d = (x3d * scale) + HALF_WIDTH;//  / 2;
+    var y2d = (y3d * scale) + HALF_HEIGHT;
+    var point2d = [x2d, y2d];
+    return point2d;
+}
 //matrix multiple, to convert a 3d point into 2d space
 function matrixMul(a, b){//a is the matrix, b is the point3d. in this case
     var colsA = a[0].length;//列
     var rowsA = a.length;//行
     //var colsB = b[0].length;
     var rowsB = b.length;
-    console.log(colsA);
     //for fault case
     if(colsA != rowsB){
         return null;
