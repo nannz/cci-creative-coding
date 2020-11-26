@@ -69,7 +69,7 @@ console.log(points.length);
 //context.translate(HALF_WIDTH,HALF_HEIGHT);
 
 function draw() {
-    context.fillStyle = "rgb(0,0,0)";
+    context.fillStyle = "rgba(0,0,0,0.7)";
     context.fillRect(0, 0, width, height);
 
 
@@ -83,7 +83,7 @@ function draw() {
     for (var i = 0; i < dim; i++) {
        // context.beginPath();
         context.strokeStyle = "rgb(0,0,0)";
-        context.fillStyle = "rgb(255,255,255)";
+        context.fillStyle = "rgba(255,255,255)";
 
         for (var j = 0; j < dim-1; j++) { //also need to record the i=0;j=0, and link the point with j = dim-1
             var index = j + i * dim;

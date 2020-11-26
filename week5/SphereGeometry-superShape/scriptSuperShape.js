@@ -1,7 +1,12 @@
-//use the mimic example as the start point
-//instead of using my own triangle strips...(cuz there is a bug..
-//supershape reference:
-//http://paulbourke.net/geometry/supershape/
+//super shape
+//formula: http://paulbourke.net/geometry/supershape/
+//inspirations: https://www.syedrezaali.com/3d-supershapes/
+//wiki: https://en.wikipedia.org/wiki/Spherical_coordinate_system
+//
+//this super shape script
+// enables you to see the stretches and changes on the shape
+// when moving the mouse
+//Nan 2020.11
 
 var fov = 500;
 
@@ -93,14 +98,14 @@ function draw() {
     }
 
 //----------------- I AM THE DIVIDER LINE ------------------//
-    context.fillStyle = "rgb(0,0,0)";
+    context.fillStyle = "rgba(0,0,0,0.5)";
     context.fillRect(0, 0, width, height);
 
     //for mouse rotating interaction
-    // angleX=0.1* ((mouseX/width)-0.5)/4;
-    // angleY=0.1* ((mouseY/height)-0.5)/4;
-    angleX+=0.01;
-    angleY+=0.01;
+    //angleX=0.1* ((mouseX/width)-0.5)/4;
+    //angleY=0.1* ((mouseY/height)-0.5)/4;
+    angleX+=0.03;
+    angleY+=0.03;
 
     for (var i = 0; i < numPoints; i++) {
         point3d = points[i];
@@ -140,7 +145,7 @@ function draw() {
         // context.strokeStyle = "rgb(255,255,255)";
 
         //context.strokeStyle = "rgb(255,255,255)";
-        context.strokeStyle =  "hsl("+hue+", 100%, 70%)";
+        context.strokeStyle =  "hsl("+hue+", 100%, 80%)";
         context.beginPath();
         //context.moveTo(x2d, y2d);
         context.moveTo(lastx2d + lastScale, lasty2d);
@@ -165,8 +170,13 @@ function draw() {
             context.stroke();
         }
     }
+    context.fillStyle =  "hsl("+hue+", 100%, 70%)";
+    context.font = '48px "Courier New", Courier, monospace';
+    context.fillText('W6-Super Shape', 10, 50);
+    context.font = '32px "Courier New", Courier, monospace';
+    context.fillText('Nan 2020.11', 10, 90);
 
-    hue += 0.5;
+    hue += 1;
     if(hue === 359) hue = 0;
 
     requestAnimationFrame(draw);

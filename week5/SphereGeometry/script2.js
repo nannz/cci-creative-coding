@@ -83,8 +83,9 @@ function draw() {
     for (var i = 0; i < dim; i++) {
        // context.beginPath();
         context.strokeStyle = "rgb(0,0,0)";
-        context.fillStyle = "rgb(255,255,255)";
-
+        //context.fillStyle = "rgb(255,255,255)";
+        var hue = map(i, 0, dim, 0, 360);
+        context.fillStyle =  "hsl("+hue+", 100%, 70%)";
         for (var j = 0; j < dim-1; j++) { //also need to record the i=0;j=0, and link the point with j = dim-1
             var index = j + i * dim;
             var index2 = j + (i + 1) * dim;//the one below

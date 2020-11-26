@@ -63,9 +63,9 @@ for (var v = 0; v < dim; v ++){
         //var point = [x,y,z];
         //add some random???why not change
         var randomPoint = [
-            Math.random()*Math.sin(10)*20,
-            Math.random()*Math.sin(10)*20,
-            Math.random()*Math.sin(10)*20
+            Math.random()*Math.sin(10)*0.1,
+            Math.random()*Math.sin(10)*0.1,
+            Math.random()*Math.sin(10)*0.1
         ];
         var point = [x+randomPoint[0], y+randomPoint[1], z+randomPoint[2]];
         points.push(point);
@@ -76,19 +76,19 @@ for (var v = 0; v < dim; v ++){
 function draw() {
     //build the sphere and add it to the points array
     //since there is randomPoint, generate the sphere in the draw loop.
-    for(var p = 0; p<numPoints; p++){
-        var point = points[p];
-        var oldX = point[0];
-        var oldY = point[1];
-        var oldZ = point[2]
-        var randomPoint = [
-            Math.random()*Math.sin(10)*10,
-            Math.random()*Math.sin(10)*10,
-            Math.random()*Math.sin(10)*10
-        ];
-        point = [oldX+randomPoint[0], oldY+randomPoint[1], oldZ+randomPoint[2]];
-        points[p] = point;
-    }
+    // for(var p = 0; p<numPoints; p++){
+    //     var point = points[p];
+    //     var oldX = point[0];
+    //     var oldY = point[1];
+    //     var oldZ = point[2]
+    //     var randomPoint = [
+    //         Math.random()*Math.sin(10)*10,
+    //         Math.random()*Math.sin(10)*10,
+    //         Math.random()*Math.sin(10)*10
+    //     ];
+    //     point = [oldX+randomPoint[0], oldY+randomPoint[1], oldZ+randomPoint[2]];
+    //     points[p] = point;
+    // }
 
     context.fillStyle = "rgb(0,0,0)";
     context.fillRect(0, 0, width, height);
@@ -97,7 +97,8 @@ function draw() {
     //for mouse rotating interaction
     angleX = 0.2 * ((mouseX / width) - 0.5) / 4;
     angleY = 0.2 * ((mouseY / height) - 0.5) / 4;
-
+    //angleX += 0.001;
+    //angleY += 0.001;
 
     //try another way to do the drawing, like two-dimensional arrays
     for (var i = 0; i < dim; i++) {

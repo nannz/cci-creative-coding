@@ -3,6 +3,7 @@
 //3D Knots reference:
 //http://paulbourke.net/geometry/knots/
 //https://en.wikipedia.org/wiki/Knot_theory
+//Nan Zhao 2020.11.25
 
 var fov = 500;
 
