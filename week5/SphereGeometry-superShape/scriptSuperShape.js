@@ -136,6 +136,7 @@ function draw() {
         context.lineWidth = scale*2;
         context.save();
         context.translate(HALF_WIDTH,HALF_HEIGHT);
+        context.lineCap = "round";
         // context.strokeStyle = "rgb(255,255,255)";
 
         //context.strokeStyle = "rgb(255,255,255)";

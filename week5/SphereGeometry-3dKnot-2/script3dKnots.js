@@ -1,7 +1,11 @@
 //use the mimic example as the start point
 //instead of using my own triangle strips...(cuz there is a bug..
-//supershape reference:
-//http://paulbourke.net/geometry/supershape/
+//this version:
+//try another knots, and try to draw it frame by frame, instead of directly show it.
+//3D Knots reference:
+//http://paulbourke.net/geometry/knots/
+//https://en.wikipedia.org/wiki/Knot_theory
+//knot in this version: eight Knot by Paul Bourke
 
 var fov = 500;
 
@@ -40,60 +44,56 @@ var spacing = ((Math.PI * 2) / dim);
 var numPoints = dim * dim;
 
 // This is how big the sphere is.
-var size = 200;
+var size = 100;
+var sizeKnot = 20;
 //intialize the xyz, for generating the points in the loop; for performance
 var x=0;
 var y = 0;
 var z = 0;
 var hue = 0;
 
-//variables for super shapes
-var m = 0;
-var a = 1; //a can be changed each frame
-var b = 1;
-var aChange = 0;
-var bChange = 0;
-var nChange = 0;
-var n1 = 0.2;
-var n2 = 1.7;
-var n3 = 1.7;
+var beta = 0;
+//for getting the projected in 2d from the 3d points
+//https://en.wikipedia.org/wiki/3D_projection
+var projection = [
+    [1,0,0],
+    [0,1,0]
+]
+var strokeColorArray = [];
 
+var strokeColor = "rgb(255,255,255)";
 function draw() {
     var points = [];
+    var knotPoints = [];
+    beta = 0;
 
-    m = map(mouseX, 0, width, 0, 10);
-    //n1 = map(mouseY, 0, height, -1, 1);
-    a = map(Math.sin(aChange),-1,1,0.95,1.05 );
-    b = map(Math.cos(bChange),-1,1,0.95,1.05 );
-    n1 =map(Math.sin(m),-1,1,-1,1 );//map(Math.sin(nChange), -1, 1, -0.5, 0.5);
-    //n2 = 0.05 + Math.sin(10);//map(Math.sin(m), -1, 1, 0.5,1.5);
-   // n3 = n2;
-    aChange += 0.01;
-    bChange += 0.01;
+    while(beta < Math.PI * 2){
 
-    // Now we build the sphere in the loop to do the change
-    for (var i =0; i < dim ; i++) {//dim ; i++) {
-        //hue = map(i, 0, dim, 0, 360);
-        var latitude = map(i, 0, dim, - Math.PI/2, Math.PI/2);//wei du
-        //var s = size * Math.sin(spacing /2 * i);//i);// Calculate the size of the current ring
-        var r2 = superShape(latitude,m, n1, n2, n3);
+        var x = 10 * (Math.cos(beta)+Math.cos(3*beta)) + Math.cos(2*beta) + Math.cos(4 * beta);//r * Math.cos(phi) * Math.cos(theta);
+        var y = 6* Math.sin(beta) + 10 * Math.sin(3 * beta);//r * Math.cos(phi)*Math.sin(theta);
+        var z = 4 * Math.sin(3*beta)*Math.sin((5*beta)/2)+4*Math.sin(4*beta)-2*Math.sin(6*beta);//r * Math.sin(phi);
+        x  = x * sizeKnot;
+        y = y * sizeKnot;
+        z = z * sizeKnot;
+        var point = [x,y,z];
 
-        for (var j = 0; j < dim; j++ ) {//dim; j++ ) {// For each ring..
-            var longitude = map(j, 0, dim, - Math.PI, Math.PI);//jing du
-            // ...create the next point in the circle at the current size s, at the current depth z
-            var r1 = superShape(longitude,m,n1,n2,n3);
-            //var point = [Math.cos(spacing * j) * s,Math.sin(spacing * j) * s,z];
-            x = size * r1 * Math.cos(longitude) * r2 * Math.cos(latitude);
-            y = size * r1 * Math.sin(longitude) * r2 * Math.cos(latitude);
-            z = size * r2 * Math.sin(latitude);//size * Math.cos(spacing / 2 * i);
-            var point = [x,y,z];
-            // Add the point to the geometry.
-            points.push(point);
-        }
+        knotPoints.push(point);
+
+        var colorSpacing = map(beta, 0, Math.PI * 2, 0, 360);
+        //var strokeColor = "rgb("+ x + "," + y + "," + z + ")";
+        //var strokeColor = "rgb(255," + colorSpacing + ",255)";
+        var strokeColor =  "hsl("+colorSpacing+", 100%, 70%)";
+        strokeColorArray.push(strokeColor);
+
+        beta += 0.01;
     }
 
+    // knotPoints.forEach(function(p){
+    //     console.log(p);
+    // })
+
 //----------------- I AM THE DIVIDER LINE ------------------//
-    context.fillStyle = "rgb(0,0,0)";
+    context.fillStyle = "rgb(255,255,255)";
     context.fillRect(0, 0, width, height);
 
     //for mouse rotating interaction
@@ -102,24 +102,29 @@ function draw() {
     angleX+=0.01;
     angleY+=0.01;
 
-    for (var i = 0; i < numPoints; i++) {
-        point3d = points[i];
-        z3d = point3d[2];
+    //in the for loop draw all the points and link them
+    var numKnotPoints = knotPoints.length;
+    //console.log(numKnotPoints);
+
+    for (var i = 0; i < numKnotPoints; i++) {//315
+        knotPoint3d = knotPoints[i];
+        z3d = knotPoint3d[2];
 
         // z3d -= 1.0;//the speed of the z,moves the points forwards in space
         if (z3d < -fov) z3d += 0;
-        point3d[2] = z3d;
+        knotPoint3d[2] = z3d;
 
-        rotateX(point3d,angleX);
-        rotateY(point3d,angleY);
+        rotateX(knotPoint3d,angleX);
+        rotateY(knotPoint3d,angleY);
 
-        x3d = point3d[0];
-        y3d = point3d[1];
-        z3d = point3d[2];
+        x3d = knotPoint3d[0];
+        y3d = knotPoint3d[1];
+        z3d = knotPoint3d[2];
 
         var scale = (fov / (fov + z3d));
-        var x2d = (x3d * scale) ;//+ HALF_WIDTH / 2;
-        var y2d = (y3d * scale) ;//+ HALF_HEIGHT;
+        var knotPoint2d = matrixMul(projection,knotPoint3d);
+        var x2d = knotPoint2d[0]//(x3d * scale) ;//+ HALF_WIDTH / 2;
+        var y2d = knotPoint2d[1];//(y3d * scale) ;//+ HALF_HEIGHT;
 
         if (i===0){//store the first points and use them at the end.
             firstx2d=x2d;
@@ -133,19 +138,18 @@ function draw() {
 
         // Draw the point
         // Set the size based on scaling
-        context.lineWidth = scale*2;
+        context.lineWidth = scale* 25 * Math.abs(Math.sin(10));
         context.save();
         context.translate(HALF_WIDTH,HALF_HEIGHT);
-        // context.strokeStyle = "rgb(255,255,255)";
 
         //context.strokeStyle = "rgb(255,255,255)";
-        context.strokeStyle =  "hsl("+hue+", 100%, 70%)";
+        context.strokeStyle = strokeColorArray[i];
+        context.lineCap = "round";
+       // context.strokeStyle =  "hsl("+hue+", 100%, 70%)";
         context.beginPath();
-        //context.moveTo(x2d, y2d);
         context.moveTo(lastx2d + lastScale, lasty2d);
         context.lineTo(x2d + scale, y2d);
         //context.closePath();
-        //context.fill();
         context.stroke();
         context.restore();
 
@@ -155,7 +159,7 @@ function draw() {
         lastScale=scale;
 
         // if it's the end of the current ring, join it to the first
-        if (i===dim-1) {
+        if (i===numKnotPoints-1) {
             context.lineWidth = scale;
             //context.strokeStyle = "rgb(255,255,255)";
             context.beginPath();
@@ -165,25 +169,14 @@ function draw() {
         }
     }
 
-    hue += 0.5;
-    if(hue === 359) hue = 0;
+    // hue += 0.5;
+    // if(hue === 359) hue = 0;
 
     requestAnimationFrame(draw);
 }
 
 requestAnimationFrame(draw);
 
-//http://paulbourke.net/geometry/supershape/
-//there are global virables a and b
-function superShape(angle, m, n1, n2, n3){
-    var t1 = Math.abs((1/a)* Math.cos(m*angle / 4));
-    t1 = Math.pow(t1, n2);
-    var t2 = Math.abs((1/b)*Math.sin(m*angle / 4));
-    t2 = Math.pow(t2, n3);
-    var t3 = t1 + t2;
-    var r = Math.pow(t3, (-1)/n1);
-    return r;
-}
 function rotateX(point3d,angleX) {
     var	x = point3d[0];
     var	z = point3d[2];
@@ -234,4 +227,21 @@ function getMouse (mousePosition) {
 function map(n, start1, stop1, start2, stop2){
     const newVal = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
     return newVal;
+}
+
+function matrixMul(a, b){//a is the matrix, b is the point3d. in this case
+    var colsA = a[0].length;//列
+    var rowsA = a.length;//行
+    //var colsB = b[0].length;
+    var rowsB = b.length;
+    //for fault case
+    if(colsA != rowsB){
+        return null;
+    }
+
+    var sum1 = a[0][0]*b[0] + a[0][1]*b[1]+ a[0][2]*b[2];
+    var sum2 = a[1][0]*b[0] + a[1][1]*b[1]+ a[1][2]*b[2];
+    var result = [sum1, sum2];
+    return result;
+
 }

@@ -135,6 +135,7 @@ function draw() {
             //draw the triangle strips!
             context.save();
             context.translate(HALF_WIDTH,HALF_HEIGHT);
+            context.lineCap = "round";
             ////the first tri, here-down-upright
             context.beginPath();
             context.moveTo(x2d, y2d);
