@@ -1,0 +1,87 @@
+<html>
+
+<head>
+    <!-- This is an HTML comment -->
+    <!-- Below we are grabbing three.js and some helper stuff for using the camera -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+    </script>
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0px;
+            background-color: #000000;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+<script>
+
+    // First we need to set up some objects and initialise them.
+    // Three.js provides a canvas automatically so we don't need that.
+    // This creates a camera. It has a field of view, a size, a near clipping plane and a far clipping plane
+    var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+    // We need to create a scene and add things to it.
+    var scene = new THREE.Scene();
+    // Now we are goint to create some built in geometry
+    // It's a box.
+    var geometry = new THREE.BoxGeometry(1, 1, 1);
+    // We are going to want to texture the box.
+    // To do this we need a texture loader object to load the texture
+    var myTextureLoader = new THREE.TextureLoader();
+    // Then we can load the texture into a variable
+    var myTexture = myTextureLoader.load('sgpic10.jpg');
+    // Now we need to create a material
+    // This defines how the surface of the object reflects light
+    // We're using Phong. There are lots of other types.
+    var material = new THREE.MeshPhongMaterial({map: myTexture});
+    // We can now create a mesh using the geomentry and the material
+    var mesh = new THREE.Mesh(geometry, material);
+    // If we want to see stuff, we will need a light.
+    // The argument is the colour of the light in hexadecimal.
+    var light = new THREE.DirectionalLight("rgb(255,255,255)");
+    // Now we can create our renderer. Thiis renders the scene.
+    var renderer = new THREE.WebGLRenderer();
+
+    // Now we can set some variables for the objects.
+    camera.position.z = 2;
+    // Notice we can also us the set method to position things.
+    //light.position.z = 2;
+    light.position.set(0, 2, 2);
+    // Now we add the mesh and the light to the scene.
+    scene.add(mesh);
+    scene.add(light);
+    // This is to make sure that the scene understands the resolution of the device we are on.
+    renderer.setPixelRatio(window.devicePixelRatio);
+    // We can also set the size of the render window
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    // Finally we want to connect the renderer to the HTML document
+    document.body.appendChild(renderer.domElement);
+    // And make sure that when the page is resized, everything gets updated
+    window.addEventListener('resize', onWindowResize, false);
+
+    //  Now we can have a draw loop.
+    function draw() {
+        mesh.rotation.x += 0.005;
+        mesh.rotation.y += 0.01;
+        //camera.position.x += 0.01;
+        renderer.render(scene, camera);
+        requestAnimationFrame(draw);
+    }
+
+    // This is the thing that does the resizing
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // Finally, call the draw loop.
+    requestAnimationFrame(draw());
+
+
+</script>
+</body>
+
+</html>
