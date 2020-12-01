@@ -11,6 +11,9 @@ import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.m
 
 //add the renderer into the canvas
 const canvas = document.querySelector('#c');
+const view1Elem = document.querySelector('#view1');
+const view2Elem = document.querySelector('#view2');
+
 const renderer = new THREE.WebGLRenderer({canvas});
 
 const fov = 70;//75;
@@ -20,7 +23,17 @@ const far = 5;//1000
 var camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 camera.position.z = 3;
 
+const camera2 = new THREE.PerspectiveCamera(
+    60,  // fov
+    2,   // aspect
+    0.1, // near
+    500, // far
+);
+camera2.position.set(60, 10, 30);
+camera2.lookAt(0, 5, 0);
 
+//add cameraHelper , draws a frustum for a camera
+const cameraHelper = new THREE.CameraHelper(camera);
 
 //-------------------------------------------------------//
 //camera GUI helper to make sure 'far' is always greater than 'near'
@@ -47,20 +60,31 @@ class MinMaxGUIHelper {
         this.min = this.min;  // this will call the min setter
     }
 }
-function updateCamera() {
-    camera.updateProjectionMatrix();
-}
+//we can disable the updateCamera, since it updated in the draw() function
+// function updateCamera() {
+//     camera.updateProjectionMatrix();
+// }
 const gui = new GUI();
-gui.add(camera, 'fov', 1, 180).onChange(updateCamera);
+// gui.add(camera, 'fov', 1, 180).onChange(updateCamera);
+gui.add(camera, 'fov', 1, 180);
 const minMaxGUIHelper = new MinMaxGUIHelper(camera, 'near', 'far', 0.1);
-gui.add(minMaxGUIHelper, 'min', 0.1, 50, 0.1).name('near').onChange(updateCamera);
-gui.add(minMaxGUIHelper, 'max', 0.1, 50, 0.1).name('far').onChange(updateCamera);
-//orbit control of the camera
-const controls = new OrbitControls(camera, canvas);
+// gui.add(minMaxGUIHelper, 'min', 0.1, 50, 0.1).name('near').onChange(updateCamera);
+// gui.add(minMaxGUIHelper, 'max', 0.1, 50, 0.1).name('far').onChange(updateCamera);
+gui.add(minMaxGUIHelper, 'min', 0.1, 10, 0.1).name('near');
+gui.add(minMaxGUIHelper, 'max', 0.1, 10, 0.1).name('far');
+
+//---------orbit control of the camera
+// const controls = new OrbitControls(camera, canvas);
+const controls = new OrbitControls(camera, view1Elem);
 // controls.target.set(0, 5, 0);
 controls.update();
+
+const controls2 = new OrbitControls(camera2, view2Elem);
+controls2.update();
 //-------------------------------------------------------//
+
 var scene = new THREE.Scene();
+scene.add(cameraHelper);
 
 const lightColor = 0xFFFFFF;
 const intensity = 1;
@@ -73,6 +97,7 @@ var myTextureLoader = new THREE.TextureLoader();
 var myTexture = myTextureLoader.load('sgpic10.jpg');
 var material = new THREE.MeshPhongMaterial({map: myTexture});
 var mesh = new THREE.Mesh(geometry, material);
+mesh.position.set(0,0,0);
 scene.add(mesh);
 
 // This is to make sure that the scene understands the resolution of the device we are on.
@@ -84,8 +109,35 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // And make sure that when the page is resized, everything gets updated
 window.addEventListener('resize', onWindowResize, false);
 
-
+const view1Color = new THREE.Color( 0xf0f0f0 );
+const view2Color = new THREE.Color( 0x000040 );
+scene.background = view1Color;
+console.log(scene);
 function draw() {
+    renderer.setScissorTest(true);
+    //----------------the first orinial view ----------------//
+    //render the original view
+    const aspect = setScissorForElement(view1Elem);
+    //adjust the camera for the aspect
+    camera.aspect = aspect;
+    camera.updateProjectionMatrix();
+    cameraHelper.update();
+    //don't draw the camera helper in the original view
+    cameraHelper.visible = false;
+    scene.background = view1Color;//.set(0x000000);
+    //render
+    renderer.render(scene, camera);
+  //----------------the second camera view ----------------//
+    const aspect2 = setScissorForElement(view2Elem);
+    camera2.aspect = aspect2;
+    camera2.updateProjectionMatrix();
+    cameraHelper.visible = true;
+    scene.background = view2Color;
+    // scene.background.set(0x000040);
+
+    renderer.render(scene, camera2);
+
+
     mesh.rotation.x += 0.005;
     mesh.rotation.y += 0.01;
     //camera.position.x += 0.01;
@@ -104,3 +156,24 @@ function onWindowResize() {
 requestAnimationFrame(draw);
 
 
+function setScissorForElement(elem) {
+    const canvasRect = canvas.getBoundingClientRect();
+    const elemRect = elem.getBoundingClientRect();
+
+    // compute a canvas relative rectangle
+    const right = Math.min(elemRect.right, canvasRect.right) - canvasRect.left;
+    const left = Math.max(0, elemRect.left - canvasRect.left);
+    const bottom = Math.min(elemRect.bottom, canvasRect.bottom) - canvasRect.top;
+    const top = Math.max(0, elemRect.top - canvasRect.top);
+
+    const width = Math.min(canvasRect.width, right - left);
+    const height = Math.min(canvasRect.height, bottom - top);
+
+    // setup the scissor to only render to that part of the canvas
+    const positiveYUpBottom = canvasRect.height - bottom;
+    renderer.setScissor(left, positiveYUpBottom, width, height);
+    renderer.setViewport(left, positiveYUpBottom, width, height);
+
+    // return the aspect
+    return width / height;
+}
