@@ -4,7 +4,9 @@
 
 //wait to update
 //1. debug the empty strip
-//2. apply the formula
+//2. fix the strange rotation...
+
+//Nan 2020.11
 
 var fov = 300;//can be variable
 
