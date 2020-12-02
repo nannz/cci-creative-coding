@@ -1,0 +1,45 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- This is an HTML comment -->
+    <!-- Below we are grabbing three.js and some helper stuff for using the camera -->
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js"></script>-->
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.123.0/build/three.module.js';
+        import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/controls/OrbitControls.js';
+        import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
+    </script>
+
+    <style>
+        body {
+            /*margin: 0px;*/
+            background-color: #000000;
+            overflow: hidden;
+        }
+        .split {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+        }
+        .split>div {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<script type="module" src="Firefly.js" type="text/javascript"></script>
+<script type="module" src="script.js" type="text/javascript"></script>
+<canvas id="c"></canvas>
+<!--<div class="split">-->
+<!--    <div id="view1" tabindex="1"></div>-->
+<!--    <div id="view2" tabindex="2"></div>-->
+<!--</div>-->
+</body>
+
+</html>

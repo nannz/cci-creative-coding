@@ -18,7 +18,7 @@ const renderer = new THREE.WebGLRenderer({canvas});
 const fov = 70;//75;
 const aspect = window.innerWidth / window.innerHeight;//2;  // the canvas default
 const near = 1;//0.1;
-const far = 10;//1000
+const far = 20;//1000
 var camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 camera.position.z = 3;
 
@@ -58,7 +58,7 @@ const gui = new GUI();
 gui.add(camera, 'fov', 1, 180).onChange(updateCamera);
 const minMaxGUIHelper = new MinMaxGUIHelper(camera, 'near', 'far', 0.1);
 gui.add(minMaxGUIHelper, 'min', 0.1, 20, 0.1).name('near').onChange(updateCamera);
-gui.add(minMaxGUIHelper, 'max', 0.1, 20, 0.1).name('far').onChange(updateCamera);
+gui.add(minMaxGUIHelper, 'max', 0.1, 50, 0.1).name('far').onChange(updateCamera);
 
 //---------orbit control of the camera-----------------------//
 const controls = new OrbitControls(camera, canvas);
@@ -108,6 +108,9 @@ const intensity = 1;
 // scene.add(light);
 const ambient = new THREE.AmbientLight( 0xffffff );
 scene.add( ambient );
+
+//add particle lights
+const particleLights = [];
 
 //fog
 /*
@@ -187,6 +190,11 @@ function draw() {
     flys.forEach(fly=>{
         fly.update();
     });
+
+    //update particle lights
+    // particleLight.position.x = Math.sin( timer * 7 ) * 300;
+    // particleLight.position.y = Math.cos( timer * 5 ) * 400;
+    // particleLight.position.z = Math.cos( timer * 3 ) * 300;
 
     //camera.position.x += 0.01;
     renderer.render(scene, camera);
