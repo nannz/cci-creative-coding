@@ -75,8 +75,6 @@ const controls = new OrbitControls(camera, canvas);
 controls.target.set(0, 0, 0);
 controls.update();
 
-//-------------------------------------------------------//
-
 //-------------------------SCENE------------------------------//
 var scene = new THREE.Scene();
 scene.add(cameraHelper);
@@ -102,8 +100,8 @@ bgTexture.mapping = THREE.EquirectangularRefractionMapping;
 scene.background = bgTexture;
 
 //---------------------GEO & MESH----------------------------------//
-var myGeos = [];
-const numMyGeos = 20;
+var glasses = [];
+const numGlasses = 20;
 // a sphere with mirror like material
 {
     const material = new THREE.MeshPhongMaterial( {
@@ -114,18 +112,18 @@ const numMyGeos = 20;
         transparent: false,
     } );
     //use class to create a Icosahedron, give r , material, position x y z
-    for (var i = 0; i < numMyGeos; i ++){
-        var myGeo = new Glass(1, material, 0,0,0);
-        myGeos.push(myGeo);
+    for (var i = 0; i < numGlasses; i ++){
+        var glass = new Glass(1, material, 0,0,0);
+        glasses.push(glass);
     }
     //var fly = new Firefly(1, material, 0,0,0);
-    myGeos.forEach(myGeo => {
-        myGeo.mesh.position.x = Math.random() * 10 - 5;
-        myGeo.mesh.position.y = Math.random() * 10 - 5;
-        myGeo.mesh.position.z = Math.random() * 10 - 5;
-        myGeo.mesh.scale.x = myGeo.mesh.scale.y = myGeo.mesh.scale.z = map(Math.random(), 0, 1, 0.1, 1.5);
+    glasses.forEach(glass => {
+        glass.mesh.position.x = Math.random() * 10 - 5;
+        glass.mesh.position.y = Math.random() * 10 - 5;
+        glass.mesh.position.z = Math.random() * 10 - 5;
+        glass.mesh.scale.x = glass.mesh.scale.y = glass.mesh.scale.z = map(Math.random(), 0, 1, 0.1, 1.5);
 
-       scene.add( myGeo.mesh );
+       scene.add( glass.mesh );
    })
 }
 var fireFlys = [];
@@ -138,13 +136,8 @@ var numfireFlys = 1;
     }
     fireFlys.forEach(fly => {
         scene.add(fly.group);
-        scene.add(fly.light);
-        // scene.add(fly.pointLightHelper);
     })
-
 }
-
-
 
 //---------add moving particle light to the plane-------//
 const lightColorBlue = new THREE.Color(0x0040ff);//blue
@@ -179,21 +172,41 @@ window.addEventListener('resize', onWindowResize, false);
 
 console.log(scene);
 var timer = 0;
+var wind = new THREE.Vector3(0.0000001,0,0);
+var gravity = new THREE.Vector3(0,-0.00001,0);
+// var randomForce = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+//-------------------------DRAW------------------------------//
 function draw() {
 
     cameraHelper.visible = false;
 
-    myGeos.forEach(myGeo=>{
-        myGeo.update();
+    //the glasses, rotate
+    glasses.forEach(glass=>{
+        glass.update();
+    });
+
+    //update the fireflys
+    //apply a force on them
+    fireFlys.forEach(fly=>{
+        fly.applyForce(gravity);
+        fly.update();
+        //console.log(fly.position);
     });
 
     //update particle lights
-    particleLight1.position.x = Math.sin( timer * 7 ) * 3;
-    particleLight1.position.y = Math.cos( timer * 5 ) * 4;
-    particleLight1.position.z = Math.cos( timer * 3 ) * 3;
-    particleLight2.position.x = - Math.sin( timer * 7 ) * 3;
-    particleLight2.position.y = - Math.cos( timer * 5 ) * 4;
-    particleLight2.position.z = Math.cos( timer * 3 ) * 3;
+    particleLight1.position.set(
+        Math.sin( timer * 7 ) * 3,
+        Math.cos( timer * 5 ) * 4,
+        Math.cos( timer * 3 ) * 3
+    );
+    particleLight2.position.set(
+        - Math.sin( timer * 7 ) * 3,
+        - Math.cos( timer * 5 ) * 4,
+        Math.cos( timer * 3 ) * 3
+    );
+
+
+
 
     //camera.position.x += 0.01;
     renderer.render(scene, camera);
