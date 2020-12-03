@@ -127,7 +127,7 @@ const numGlasses = 20;
    })
 }
 var fireFlys = [];
-var numfireFlys = 1;
+var numfireFlys = 2;
 //I moved the material into the Firefly.js
 {
     for (var i = 0; i < numfireFlys; i ++) {
@@ -138,12 +138,11 @@ var numfireFlys = 1;
         scene.add(fly.group);
     })
 }
-
 //---------add moving particle light to the plane-------//
 const lightColorBlue = new THREE.Color(0x0040ff);//blue
 const lightColorYellow = new THREE.Color(0xFFFF00);
 const lightColorRed = new THREE.Color(0xFF4D0A);//red
-const particleSphere = new THREE.SphereBufferGeometry(0.05, 8, 8);
+const particleSphere = new THREE.SphereBufferGeometry(0.05, 8, 8);//0.05, 8, 8);
 var particleLight1 = new THREE.PointLight(lightColorBlue, 5, 50);//color,intensity, distance,
 var particleLight2 = new THREE.PointLight(lightColorRed, 5, 50);
 particleLight1.add(new THREE.Mesh(particleSphere, new THREE.MeshBasicMaterial({
@@ -173,8 +172,13 @@ window.addEventListener('resize', onWindowResize, false);
 console.log(scene);
 var timer = 0;
 var wind = new THREE.Vector3(0.0000001,0,0);
-var gravity = new THREE.Vector3(0,-0.00001,0);
-// var randomForce = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+var gravity = new THREE.Vector3(0,-0.1,0);
+fireFlys.forEach(fly=>{
+    fly.applyForce(new THREE.Vector3(Math.random()*0.8,Math.random()*0.8,Math.random()*0.8) );
+    // console.log(fly.position);
+});
+
+console.log(fireFlys);
 //-------------------------DRAW------------------------------//
 function draw() {
 
@@ -187,11 +191,20 @@ function draw() {
 
     //update the fireflys
     //apply a force on them
-    fireFlys.forEach(fly=>{
-        fly.applyForce(gravity);
-        fly.update();
-        //console.log(fly.position);
-    });
+    var particleLightPos = particleLight1.position;
+    // fireFlys.forEach(fly=>{
+    //     fly.seek(particleLightPos);
+    //     fly.update();
+    // });
+    //---test the second fly
+    fireFlys[0].seek(particleLightPos);
+    fireFlys[0].update();
+    console.log("fireFlys[0]");
+    console.log(fireFlys[0].group.position);
+    fireFlys[1].seek(particleLightPos);
+    fireFlys[1].update();
+    console.log("fireFlys[1]");//why 1 is sooooooo smalll
+    console.log(fireFlys[1].group.position);
 
     //update particle lights
     particleLight1.position.set(
@@ -204,8 +217,6 @@ function draw() {
         - Math.cos( timer * 5 ) * 4,
         Math.cos( timer * 3 ) * 3
     );
-
-
 
 
     //camera.position.x += 0.01;
