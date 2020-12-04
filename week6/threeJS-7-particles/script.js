@@ -27,7 +27,7 @@ const canvas = document.querySelector('#c');
 
 const renderer = new THREE.WebGLRenderer({canvas});
 
-const fov = 70;//75;
+const fov = 35;//75;
 const aspect = window.innerWidth / window.innerHeight;//2;  // the canvas default
 const near = 1;//0.1;
 const far = 50;//1000
