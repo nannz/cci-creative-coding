@@ -26,7 +26,7 @@ class Firefly{
 
         //create a light inside
         this.lightColor = new THREE.Color(0xFFFF00)//yellow:(0xF5E857);//red 0xFF4D0A
-        this.light = new THREE.PointLight(this.lightColor, 0.5, 0);//color, intensity, distence, (decay)
+        this.light = new THREE.PointLight(this.lightColor, 0.3, 0);//color, intensity, distence, (decay)
         this.light.position.set(x, y, z);
         // this.pointLightHelper = new THREE.PointLightHelper( this.light, 1 );
         this.group.add(this.light);

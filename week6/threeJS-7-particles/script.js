@@ -9,7 +9,9 @@ import {OBJLoader} from'https://threejsfundamentals.org/threejs/resources/threej
 //this version:
 //don't know how to make the fly as an object with load model function and get it animated
 //so try directly create meshes to apply particle system.
-//next, to use the 3d model.
+//had trouble on applying force to an array of fireflys. the seek position passed in will change after the first object.
+//then initialize a new THREE.Vector3 to fix the problem
+//next, to use the 3d model into the Firefly class.
 //Nan 2020.12
 
 //-------STRUCTURE GUIDE-------//
@@ -149,7 +151,7 @@ const lightColorBlue = new THREE.Color(0x0040ff);//blue
 const lightColorYellow = new THREE.Color(0xFFFF00);
 const lightColorRed = new THREE.Color(0xFF4D0A);//red
 const particleSphere = new THREE.SphereBufferGeometry(0.05, 8, 8);//0.05, 8, 8);
-var particleLight1 = new THREE.PointLight(lightColorBlue, 8, 50);//color,intensity, distance,
+var particleLight1 = new THREE.PointLight(lightColorBlue, 12, 50);//color,intensity, distance,
 var particleLight2 = new THREE.PointLight(lightColorRed, 8, 50);
 particleLight1.add(new THREE.Mesh(particleSphere, new THREE.MeshBasicMaterial({
     color: lightColorBlue,
