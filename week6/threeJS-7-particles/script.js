@@ -28,7 +28,7 @@ const renderer = new THREE.WebGLRenderer({canvas});
 const fov = 70;//75;
 const aspect = window.innerWidth / window.innerHeight;//2;  // the canvas default
 const near = 1;//0.1;
-const far = 20;//1000
+const far = 50;//1000
 var camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 camera.position.z = 3;
 
@@ -68,7 +68,7 @@ const gui = new GUI();
 gui.add(camera, 'fov', 1, 180).onChange(updateCamera);
 const minMaxGUIHelper = new MinMaxGUIHelper(camera, 'near', 'far', 0.1);
 gui.add(minMaxGUIHelper, 'min', 0.1, 20, 0.1).name('near').onChange(updateCamera);
-gui.add(minMaxGUIHelper, 'max', 0.1, 50, 0.1).name('far').onChange(updateCamera);
+gui.add(minMaxGUIHelper, 'max', 0.1, 100, 0.1).name('far').onChange(updateCamera);
 
 //---------orbit control of the camera-----------------------//
 const controls = new OrbitControls(camera, canvas);
@@ -122,29 +122,35 @@ const numGlasses = 20;
         glass.mesh.position.y = Math.random() * 10 - 5;
         glass.mesh.position.z = Math.random() * 10 - 5;
         glass.mesh.scale.x = glass.mesh.scale.y = glass.mesh.scale.z = map(Math.random(), 0, 1, 0.1, 1.5);
-
+        console.log(glass.mesh.position);
        scene.add( glass.mesh );
    })
+
 }
+
 var fireFlys = [];
-var numfireFlys = 2;
+var numfireFlys = 10;
 //I moved the material into the Firefly.js
 {
     for (var i = 0; i < numfireFlys; i ++) {
-        var firefly = new Firefly(1, 0, 0, 0);//radius, material , x, y , z
+        let fx  = Math.random() * 10 - 5;//map(Math.random(),0,1,-1,1);
+        let fy = Math.random() * 10 - 5;//map(Math.random(),0,1,-1,1);
+        let fz = Math.random() * 10 - 5;//map(Math.random(),0,1,-1,1);
+        var firefly = new Firefly(0.2, fx, fy, fz);//radius, material , x, y , z
         fireFlys.push(firefly);
     }
     fireFlys.forEach(fly => {
         scene.add(fly.group);
     })
 }
+
 //---------add moving particle light to the plane-------//
 const lightColorBlue = new THREE.Color(0x0040ff);//blue
 const lightColorYellow = new THREE.Color(0xFFFF00);
 const lightColorRed = new THREE.Color(0xFF4D0A);//red
 const particleSphere = new THREE.SphereBufferGeometry(0.05, 8, 8);//0.05, 8, 8);
-var particleLight1 = new THREE.PointLight(lightColorBlue, 5, 50);//color,intensity, distance,
-var particleLight2 = new THREE.PointLight(lightColorRed, 5, 50);
+var particleLight1 = new THREE.PointLight(lightColorBlue, 8, 50);//color,intensity, distance,
+var particleLight2 = new THREE.PointLight(lightColorRed, 8, 50);
 particleLight1.add(new THREE.Mesh(particleSphere, new THREE.MeshBasicMaterial({
     color: lightColorBlue,
     envMap: bgTexture,
@@ -174,8 +180,7 @@ var timer = 0;
 var wind = new THREE.Vector3(0.0000001,0,0);
 var gravity = new THREE.Vector3(0,-0.1,0);
 fireFlys.forEach(fly=>{
-    fly.applyForce(new THREE.Vector3(Math.random()*0.8,Math.random()*0.8,Math.random()*0.8) );
-    // console.log(fly.position);
+    fly.applyForce(new THREE.Vector3(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5) );
 });
 
 console.log(fireFlys);
@@ -192,19 +197,22 @@ function draw() {
     //update the fireflys
     //apply a force on them
     var particleLightPos = particleLight1.position;
-    // fireFlys.forEach(fly=>{
-    //     fly.seek(particleLightPos);
-    //     fly.update();
-    // });
-    //---test the second fly
-    fireFlys[0].seek(particleLightPos);
-    fireFlys[0].update();
-    console.log("fireFlys[0]");
-    console.log(fireFlys[0].group.position);
-    fireFlys[1].seek(particleLightPos);
-    fireFlys[1].update();
-    console.log("fireFlys[1]");//why 1 is sooooooo smalll
-    console.log(fireFlys[1].group.position);
+    fireFlys.forEach(fly=>{
+        //*******went through huge problem
+        //i need to intiallize a new three vector for the fireFly to follow
+        //other wise the particleLightPos will change after the first round of seek()
+        var particleLightPos1 = new THREE.Vector3(particleLight1.position.x,particleLight1.position.y,particleLight1.position.z );
+        var particleLightPos2 = new THREE.Vector3(particleLight2.position.x,particleLight1.position.y,particleLight1.position.z );
+        // if (Math.random()>0.5){
+        //     fly.seek(particleLightPos1);
+        // }else{
+        //     fly.seek(particleLightPos2);
+        // }
+        fly.seek(particleLightPos1);
+        var randomF = map(Math.random(),0,1,-0.02,0.02);
+        fly.applyForce(new THREE.Vector3(randomF,randomF,randomF));
+        fly.update();
+    });
 
     //update particle lights
     particleLight1.position.set(

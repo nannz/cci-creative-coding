@@ -26,25 +26,27 @@ class Firefly{
 
         //create a light inside
         this.lightColor = new THREE.Color(0xFFFF00)//yellow:(0xF5E857);//red 0xFF4D0A
-        this.light = new THREE.PointLight(this.lightColor, 1, 0);//color, intensity, distence, (decay)
+        this.light = new THREE.PointLight(this.lightColor, 0.5, 0);//color, intensity, distence, (decay)
         this.light.position.set(x, y, z);
         // this.pointLightHelper = new THREE.PointLightHelper( this.light, 1 );
         this.group.add(this.light);
 
         //for physics
-        this.vel = new THREE.Vector3(0,0,0);
+        this.vel = new THREE.Vector3(Math.sin(Math.random()),Math.sin(Math.random()),Math.sin(Math.random()));
         this.acc = new THREE.Vector3(0,0,0);
         this.mass = Math.random()*10;
         this.massVector = new THREE.Vector3(this.mass,this.mass,this.mass);//create a mass vector to divide to force
 
+        /*
         //add the axis helper
         this.axes = new THREE.AxesHelper(2);
         this.axes.material.depthTest = false;
         this.axes.renderOrder = 1;
         this.group.add(this.axes);
-        this.maxDesiredVel = new THREE.Vector3(0.2,0.2,0.2);
+         */
+        this.maxDesiredVel = new THREE.Vector3(0.05,0.05,0.05);
         // this.maxSteelForce = new THREE.Vector3(0.1,0.1,0.1);
-        this.maxSteelForce = 0.4;
+        this.maxSteelForce = 0.2;
     }
 
     update(){
@@ -82,4 +84,9 @@ class Firefly{
 
     }
 }
+function map(n, start1, stop1, start2, stop2){
+    const newVal = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+    return newVal;
+}
+
 export default Firefly;
