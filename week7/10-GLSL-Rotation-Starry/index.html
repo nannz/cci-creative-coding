@@ -43,27 +43,30 @@ precision mediump float;
     void main(void)
     {
 
-		//*** order of transformation
-		// scale, rotate, then translate??
-    	float angle = M_PI * mouse.x;
+		float mouseNormX = mouse.x/resolution.x;
+		float mouseNormY = mouse.y/resolution.y;
+    	float angle = M_PI * mix(mouseNormX , mouseNormY,time);//M_PI * time * 0.001;
     	mat2 rotation = mat2( cos(angle), sin(angle),
                                 -sin(angle), cos(angle));
 		//doing the translate
 		vec2 translate = resolution.xy/2.;
-		vec2 pos = mod(rotation * (gl_FragCoord.xy - translate), vec2(50.0)) - vec2(25.0);
+
+		float modX = 100.0 ;//* (1. + mix(mouseNormX , mouseNormY,angle));
+		float modY = 0.5 * modX;
+		vec2 pos = mod(rotation * (gl_FragCoord.xy - translate), modX) -  modY;
 		vec2 normCoord = ( gl_FragCoord.xy / resolution.xy ) ;//* 2.0 - 1.0;
 
 		vec3 finalColor = vec3 ( 1.0, 0.7, 0.9 );//a pink one
 		float width = 40.0;//越大线越细
 
 		//===below the original version
-		//finalColor *= abs( 1.0 / (sin( uv.x + cos(uv.y+time)* 0.10 ) * 40.0) );
+		//finalColor *= abs( 1.0 / (sin( pos.x + cos(pos.y+time)* 0.10 ) * 40.0) );
 		//===below: only half of the line
-		//finalColor *=  1.0 / (sin( uv.x + cos(uv.y+time)* 0.10 ) * width) ;
+		//finalColor *=  1.0 / (sin( pos.x + cos(pos.y+time)* 0.10 ) * width) ;
 		//===below: the lines goes staight from right to left
-		//finalColor *=  1.0 / (sin( uv.x + time ) * width)  ;
+		//finalColor *=  1.0 / (sin( pos.x + time ) * width)  ;
 		//===below: freq变高，会有残影
-		//finalColor *=  1.0 / (sin( cos(uv.x+time) *100.) * width)  ;//
+		//finalColor *=  1.0 / (sin( cos(pos.x+time) *100.) * width)  ;//
 
 		finalColor *=  1.0 / (sin(pos.x + cos(pos.y+time) *0.1) * width)  ;
 
