@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288b871d-22b6-4aae-a2fc-7b11890f6355" name="Default Changelist" comment="">
-      <change afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/5-JWalgorithm-mouseClick-2/.idea/5-JWalgorithm-mouseClick-2.iml" afterPathEscaped="$PROJECT_DIR$/.idea/5-JWalgorithm-mouseClick-2.iml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/5-JWalgorithm-mouseClick-2/.idea/.gitignore" beforePathEscaped="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/5-JWalgorithm-mouseClick-2/.idea/modules.xml" beforePathEscaped="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/5-JWalgorithm-mouseClick-2/.idea/modules.xml" afterPathEscaped="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week3/5-JWalgorithm-mouseClick-2/.idea/test-JW-algorithm.iml" beforePathEscaped="$PROJECT_DIR$/.idea/test-JW-algorithm.iml" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week6/threeJS-7-particles/resources/models/gltf/paperPlane.gltf" beforePathEscaped="$PROJECT_DIR$/../../week6/threeJS-7-particles/resources/models/gltf/paperPlane.gltf" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week6/threeJS-7-particles/resources/models/gltf/scene.bin" beforePathEscaped="$PROJECT_DIR$/../../week6/threeJS-7-particles/resources/models/gltf/scene.bin" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week6/threeJS-7-particles/resources/models/obj/fly.obj" beforePathEscaped="$PROJECT_DIR$/../../week6/threeJS-7-particles/resources/models/obj/fly.obj" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week6/threeJS-7-particles/resources/models/obj/paperPlane.obj" beforePathEscaped="$PROJECT_DIR$/../../week6/threeJS-7-particles/resources/models/obj/paperPlane.obj" beforeDir="false" />
+      <change beforePath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week6/threeJS-7-particles/script.js" beforePathEscaped="$PROJECT_DIR$/../../week6/threeJS-7-particles/script.js" beforeDir="false" afterPath="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding/week6/threeJS-7-particles/script.js" afterPathEscaped="$PROJECT_DIR$/../../week6/threeJS-7-particles/script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,12 +15,6 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$USER_HOME$/UAL-CCI/03-Creative Coding/cci-creative-coding" />
-  </component>
-  <component name="JsFlowSettings">
-    <service-enabled>true</service-enabled>
-    <exe-path />
-    <other-services-enabled>true</other-services-enabled>
-    <auto-save>true</auto-save>
   </component>
   <component name="ProjectId" id="1kCr0QqIPXW6AOKJp70XB1bm7WS" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -47,6 +42,7 @@
       <option name="presentableId" value="Default" />
       <updated>1605215190591</updated>
       <workItem from="1605215191696" duration="154000" />
+      <workItem from="1607539450588" duration="16000" />
     </task>
     <servers />
   </component>

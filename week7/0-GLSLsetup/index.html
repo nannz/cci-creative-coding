@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+	<style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+  <script>
+    //notes here
+    //(0,0)starts from the left-bottom cornor
+   //we don't return anything in main()
+    //we just write into the virables
+    //a fragment must have main() and a gl_FragColor in it.
+    
+ 
+</script>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		void main() { gl_Position = vec4( position, 1.0 ); }
+
+</script>
+  
+	<script id="fragmentShader" type="x-shader/x-fragment">
+   
+
+
+		//============================================================
+		//PUT YOUR GLSL CODE HERE
+		//============================================================
+
+        precision mediump float;
+        
+        uniform vec2 resolution;
+        uniform vec2 mouse;
+        uniform float time;
+        
+        void main() {
+        	vec2 colour = gl_FragCoord.xy/resolution;
+        	gl_FragColor = vec4(colour.x,colour.y,0.0,1.0);
+            //gl_FragColor = vec4(abs(sin(time)),0.0,0.0,1.0);
+        }
+
+		//we can try different mathematical methods here:
+        
+		//============================================================
+		//END OF GLSL CODE
+		//============================================================
+
+</script>
+	<script>
+      /*//At the moment you only need to focus on the code within the section marked "PUT YOUR GLSL CODE HERE".
+//Referring to the lecture slides, try to 
+- modify the colours of the fragment shader 
+- by using 1)the time uniform and 2)a mathematical function.
+
+//Try to memorise the GLSL code (JUST the GLSL section after the part marked "PUT YOUR GLSL CODE HERE" and before the part marked "END OF GLSL CODE")*/
+      
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 5;
+		var container, stats;
+		var camera, scene, renderer;
+		var uniforms;
+		init();
+		animate();
+		function init() {
+			camera = new THREE.Camera();
+			camera.position.z = 1;
+			scene = new THREE.Scene();
+			var geometry = new THREE.PlaneBufferGeometry(2, 2);
+			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+			var mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution 
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+			document.body.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+			render();
+		}
+		function onMouseMove( event ) {
+        	uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
+ 	        uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight
+ 	        );
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>

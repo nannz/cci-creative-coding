@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  	<style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+     <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body, #container {
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		void main() { gl_Position = vec4( position, 1.0 ); }
+
+</script>
+  <script>
+    //notes here:
+
+	////step like a if statement, produce 1 or 0,
+	//see if 1.0 is bigger than colour or nor.
+	//colour = step(1.0, colour);
+
+    //another built-in function: smoothstep
+
+    //another method: squared distance,
+    //making use of the dot product
+    //which is the product the euclidean magnitudes of the two vectors and the cosine of the angle between them
+    //两个向量相乘
+
+    //this calculates the difference
+    //between the centre of our circle
+    //to the current pixel -B-A
+    //vec2 pos = gl_GragCoord.xy - resolution / 2.0
+
+    //this gets the squared distance using the dot product
+    //float dist_squared = dot(pos, pos);
+
+    //interpolate a boundary
+    //we will always use this to make the edges of the (circle) smooth.
+    //smoothstep(start, end, input)
+
+    //use Polar coordinate
+    //to calculate pixel colours
+
+    //use modulo
+    //(like object and class????
+    //to divide up the coordinate space
+    //we can draw lots of circles of the same thing
+
+    //use rotation with
+    //matrices (column first!)
+
+    //change the position of the circle
+    //by multiplying the centre of the circle by the mouse position.
+
+    //change the colour of the circle based on
+    //the y dimension? Make a note of the effect this has.
+
+
+</script>
+	<script id="fragmentShader" type="x-shader/x-fragment">//============================================================
+//PUT YOUR GLSL CODE HERE
+//============================================================
+
+
+// This is the precision. This must be set first
+precision mediump float;
+
+//These uniforms need to be set up in your management code
+uniform vec2 resolution;
+uniform vec2 mouse;
+uniform float time;
+
+
+// This is the main loop
+void main(void)
+{
+	//NEXT===============
+	//=======use time
+	//=======use different colours
+
+	//=================================================
+    //=======POSITION & MOUSE
+    //=======change the position of the circle by multiplying the centre of the circle by the mouse position.
+	//**also change the onMouseMove function to get the right mouse values
+	vec2 pos = mouse.xy;
+
+//======Set the centre of the circle in the middle of the screen(x,y)
+    //vec2 pos = resolution.xy/2.0;//the centre point
+
+    // This will hold the colour
+    //it calculates the distance between the centre point to the current fragment(pixel)
+    //colour and distance are float type
+	float colour = distance(gl_FragCoord.xy, pos);//if comment, the canvas will go totally black
+    colour *= 0.01;// this scales the distance field a bit.//数字越小，圈越大
+
+
+//=========if-statement
+//	if(colour > 1.0){colour = 1.0; }else{colour = 0.0; }
+
+//=============STEP
+    //step like a if-statement, produce 1 or 0,
+    //see if 1.0 is bigger than colour or nor.
+	//float step(float edge, float x)
+    //colour = step(1.0, colour);
+
+//=============SMOOTHSTEP
+    //another built-in function: smoothstep
+    //vec2 smoothstep(vec2 edge0, vec2 edge1, vec2 x)
+	//float smoothstep(float edge0, float edge1, float x)
+	// returns 0.0 if x is smaller than edge0 and 1.0 if x is larger than edge1. Otherwise the return value is interpolated between 0.0 and 1.0 using Hermite polynomials.
+    //colour = smoothstep(0.98,1.0,colour);
+
+//========CHANGE COLOR on Y
+	//change the colour of the circle based on the y dimension
+	//1-
+	//this will go across the screen to get the value 7
+	//thus the colour will brighter at top of the screen, and darker at the bottom part
+    //->next, how to make the gradient colour NOT change?
+	float colourY = gl_FragCoord.y/resolution.y;
+
+    if(colour > 1.0){
+        colour = 1.0;
+    }else{
+        colour = colourY;
+    }
+	//->how to make the edge smoother in this case??? (change in Y dimension)
+
+    gl_FragColor = vec4(vec3(colour), 1.0);
+	//=====
+	//gl_FragColor = vec4(abs(sin(time)),0.0,0.0,1.0);
+}
+
+
+//============================================================
+//END OF GLSL CODE
+//============================================================
+
+</script>
+	<script>
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 5;
+		var container, stats;
+		var camera, scene, renderer;
+		var uniforms;
+		init();
+		animate();
+		function init() {
+			container = document.getElementById('container');
+			camera = new THREE.Camera();
+			camera.position.z = 1;
+			scene = new THREE.Scene();
+			var geometry = new THREE.PlaneBufferGeometry(2, 2);
+
+			uniforms = {
+				time: { type: 'f', value: 1.0 },
+				resolution: { type: 'v2', value: new THREE.Vector2() },
+				mouse: {type: "v2", value: new THREE.Vector2()}
+			};
+
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+
+			var mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+			container.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+			console.log(uniforms.resolution.value.x,uniforms.resolution.value.y);
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+			//console.log(uniforms.resolution.value.x,uniforms.resolution.value.y);
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+			render();
+		}
+		//when window.innerWidth = 833, the renderer.domElement.width = 266
+		function onMouseMove( event ) {
+			//range of uniform x => 0~2
+			//range of uniform y => 2~0
+        	//uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
+ 	        //uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight);
+			uniforms.mouse.value.x = uniforms.resolution.value.x * ( event.clientX / window.innerWidth );
+			uniforms.mouse.value.y = uniforms.resolution.value.y * ( 1-(event.clientY) / window.innerHeight);
+ 	        console.log(uniforms.mouse.value.x , uniforms.mouse.value.y);
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>

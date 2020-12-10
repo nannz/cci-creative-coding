@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  	<style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+     <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body, #container {
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		void main() { gl_Position = vec4( position, 1.0 ); }
+
+</script>
+	<script id="fragmentShader" type="x-shader/x-fragment">
+		//============================================================
+		//PUT YOUR GLSL CODE HERE
+		//============================================================
+
+
+        // This is the precision. This must be set first
+       precision mediump float;
+        
+        uniform vec2 resolution;
+        uniform vec2 mouse;
+        uniform float time;
+        
+        void main(){
+
+			//=> what's normCoord: 0-1, relationship in the screen
+            vec2 normCoord = gl_FragCoord.xy/resolution.y;
+			//vec2 normCoord = gl_FragCoord.xy/resolution.x;
+
+			//=> why 0.5? why so small: cuz to the centre
+			//0.5 is because normCoord is vec2(0-1)
+            vec2 pos = vec2(0.5)-normCoord;
+
+
+        // the radius is the length of the hypotenuse 三角形的最长边
+            float radius = length(pos)* 5.0;//*2.0;
+        // the angle is the inverse tangent of y/x    
+            float angle = atan(pos.y,pos.x);
+        // cosine of the angle for complex rose    
+            //float petals = cos(angle*1.0); // change this value with mouse.x maybe?
+//        	float petals = cos(angle * mouse.y);
+			float petals = sin(angle * mouse.y * 100.0);
+            //vec3 colour = vec3(step(petals,radius) );
+			vec3 colour = vec3(petals );
+            gl_FragColor = vec4(vec3(colour),1.0);
+        }
+		//============================================================
+		//END OF GLSL CODE
+		//============================================================
+
+</script>
+	<script>
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 2;
+		var container, stats;
+		var camera, scene, renderer;
+		var uniforms;
+		init();
+		animate();
+		function init() {
+			container = document.getElementById('container');
+			camera = new THREE.Camera();
+			camera.position.z = 1;
+			scene = new THREE.Scene();
+			var geometry = new THREE.PlaneBufferGeometry(2, 2);
+			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+			var mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution 
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+			container.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+			render();
+		}
+		function onMouseMove( event ) {
+        	uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
+ 	        uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight
+ 	        );
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>

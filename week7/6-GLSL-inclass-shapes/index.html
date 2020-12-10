@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<head>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+<script>
+	//===HOME WORK & NOTES
+	//1. Create a new called rectangle function that
+	//lets you specify the length of the sides independently.
+
+	//2. Now try to create a simple picture with lots of rectangles, squares or circles
+	// of different colours.
+	// Remember you can add, subtract or multiply the outputs of functions.
+	// Make notes about the kinds of effects this can have.
+
+	//3. use a mat2 matrix to skew the sides of the square,
+	// or to rotate it. the rotation matrix
+
+	//4.Do a complex line drawing using a sequence of lines
+	// that carry out specific functions.
+
+	//5. Try to create expressions with combinations of
+	// sin, cos, tan, atan, pow etc.
+	// Look up the functions on shaderific for some inspiration.
+
+	//6. Experiment adding and subtracting the lines together.
+	// Remember that when you combine functions together,
+	// every pixel can be affected.
+
+
+	//===my notes
+	//I can use **modulo** to create a lot of rects and squares and circles
+	//can use mouse interaction
+	//colour can change overtime, with time virable
+
+</script>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		uniform highp float time;
+
+		void main() {
+	        gl_Position = vec4(position,1.0) ;                
+		}
+
+</script>
+	<script id="fragmentShader" type="x-shader/x-fragment">
+		//============================================================
+		//PUT YOUR GLSL CODE HERE
+		//============================================================
+
+        precision mediump float;
+        
+        uniform vec2 resolution;
+        uniform vec2 mouse;
+        uniform highp float time;
+        
+    	//square(vec2(0.35,0.5),1.);
+		//vec2 pos must smaller than 1, since we use normCoords here
+		//focus on the relationship in the screen window
+        float square(vec2 pos, float size) {
+ 
+
+        	vec2 normCoords = gl_FragCoord.xy/resolution;
+            //get the ratio of x to y, will correct the width.
+            //otherwise, like this:https://mimicproject.com/code/1c83ae88-4117-38f8-216e-5a825f168314
+            float aspect = resolution.x/resolution.y;
+            size*=0.1;//make it smaller.
+
+            if (length((normCoords.x-pos.x) * aspect)< size && length(normCoords.y-pos.y) < size) {
+    
+                return 1.0;
+            
+            } else {
+                
+                return 0.;
+            }
+        }
+
+		//-----two ways to draw lines
+		//1. draw two squares on top of each other
+		//and substract one from the other
+		//2. the function below
+		//use it this way: float lines = line(pos,y);color = vec3(lines,0.,0.);
+		//and float y = 0.5+ (sin(pos.x*6.28) * 0.5);//pos is the normCoord, y here is between 0 and 1
+		//then we will get the sinwave.
+		//=> Question, but how to have line with other shapes, colour add together?
+        //the function below plots a line across x dimension, with increasing Y values
+
+        //we can create a 3D shape  with sin function in multiple dimensions
+        float line(vec2 pos, float funct) {
+
+			//This if-statement does the same job as the step function
+			//the 0.01 is a offset.
+			//if (normalised_Coordinate.y - funct < 0.01 && normalised_Coordinate.y - funct > 0.0) {
+			//   return normalised_Coordinate.y;
+			//} else {
+			//   return 0.;
+			//}
+
+			//If wanted a smooth line, I could use smoothstep.
+            //but step() is more efficient
+            float lineWidth = 0.02;
+           return step(funct,pos.y)-step(funct,pos.y-lineWidth);
+        }
+        
+        float circle(vec2 pos, float size) {
+            
+            size = 1./size;
+            size*=10.;
+            float aspect = resolution.x/resolution.y;
+            
+            vec2 normCoord = vec2(gl_FragCoord.x/(resolution.x) * aspect,gl_FragCoord.y/resolution.y);
+            
+            float colour = distance(normCoord,pos);
+            return smoothstep(colour * size, colour * size+0.02,1.);
+        }
+        
+        void main(){
+            
+        	vec2 pos = gl_FragCoord.xy/resolution;
+            float y = 0.5+ (sin(pos.x*6.28) * 0.5);
+			vec3 colorLine = vec3(y);
+			float line = line(pos,y);
+
+            float rect = square(vec2(0.35,0.5),1.);//so y here is in the middle of the y-axis
+            
+            float rect2 = square(vec2(0.15,0.35),1.);
+            
+            float circleOne = circle(vec2(0.2,0.8),1.);
+
+			//downbelow, vec3(0.3,0.1,0.5) is a colour value.
+			//we blend the colour with the rect's colour
+			//we want the squareOne is 0.3 red more than rect, 0.1 blue more than rect, and 0.5 green more than rect
+			//it will naturally blend
+            vec3 squareOne = vec3(0.3,0.1,0.5) * rect;
+            
+            vec3 squareTwo = vec3(0.2,0.1,0.15) * rect2;
+            
+        	gl_FragColor = vec4(squareOne + squareTwo + circleOne,1.0);
+        }
+		//============================================================
+		//END OF GLSL CODE
+		//============================================================
+
+</script>
+	<script>
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 2;
+		var stats;
+		var camera, scene, renderer;
+		var uniforms;
+		init();
+		animate();
+		function init() {
+
+			camera = new THREE.Camera();
+			camera.position.z = 1;
+			scene = new THREE.Scene();
+			var geometry = new THREE.PlaneBufferGeometry(2,2);
+			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+			var mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution 
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+			document.body.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+			render();
+		}
+		function onMouseMove( event ) {
+        	uniforms.mouse.value.x = ( event.clientX / window.innerWidth );
+ 	        uniforms.mouse.value.y = ( 1-(event.clientY) / window.innerHeight
+ 	        );
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>

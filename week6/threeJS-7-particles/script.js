@@ -3,9 +3,6 @@ import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/t
 import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
 import Glass from './Glass.js';
 import Firefly from "./Firefly.js";
-import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/loaders/GLTFLoader.js';
-import {OBJLoader} from'https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/loaders/OBJLoader.js';
-
 //this version:
 //don't know how to make the fly as an object with load model function and get it animated
 //so try directly create meshes to apply particle system.

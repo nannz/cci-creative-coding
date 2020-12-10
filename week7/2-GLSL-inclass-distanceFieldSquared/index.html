@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            margin: 0px;
+            background-color: #000000;
+            overflow: hidden;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body, #container {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() { gl_Position = vec4(position, 1.0); }
+
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+    //============================================================
+    //PUT YOUR GLSL CODE HERE
+    //============================================================
+
+
+    // This is the precision. This must be set first
+    precision mediump float;
+
+    //These uniforms need to be set up in your management code
+    uniform vec2 resolution;
+    uniform vec2 mouse;
+    uniform float time;
+
+
+    // This is the main loop
+    void main(void)
+    {
+
+		//====Modulo
+		//use modulo
+		//(like object and class???? to divide up the coordinate space
+		//we can draw lots of circles of the same thing
+        //What does this do? (comment out the other vec2 pos line)
+		//float mod(float x, float y)
+		//The mod function returns x minus the product of y and floor(x/y).
+		//5 mod 2 = 1
+//        vec2 pos = mod(gl_FragCoord.xy, vec2(100.0)) - vec2(50.0);
+		vec2 pos = mod(gl_FragCoord.xy, vec2(50.0))- vec2(25.0);
+
+
+        //======This calculates the difference between the centre of our circle to the current pixel - B-A.
+        //vec2 pos = gl_FragCoord.xy - resolution.y / 2.0;
+
+        //====DOT PRODUCT
+        // This gets the squared distance using the dot product
+        //The dot function returns the dot product of the two input parameters,
+        //i.e. the sum of the component-wise products.
+        //If x and y are the same the square root of
+        //the dot product is equivalent to the length of the vector.
+        float dist_squared = dot(pos, pos);//the length of pos vector
+
+        // This will hold the colour
+        float colour=0.;
+
+        // If the squared distance is less than the size of the circle
+        // then make the colour = 1.0
+        //if (dist_squared < 1000.) colour = 1.;
+
+        //What does this do?
+		colour = smoothstep(dist_squared, dist_squared * 1.1, 500.);
+        //colour = smoothstep(dist_squared, dist_squared * 1.5, 1000.);
+
+        gl_FragColor = vec4(vec3(colour), 1.0);
+    }
+
+    //============================================================
+    //END OF GLSL CODE
+    //============================================================
+
+</script>
+<script>
+    //change the resolution here. 1 is highest
+    var pixel_resolution = 5;
+    var container, stats;
+    var camera, scene, renderer;
+    var uniforms;
+    init();
+    animate();
+
+    function init() {
+        container = document.getElementById('container');
+        camera = new THREE.Camera();
+        camera.position.z = 1;
+        scene = new THREE.Scene();
+        var geometry = new THREE.PlaneBufferGeometry(2, 2);
+        uniforms = {
+            time: {type: 'f', value: 1.0},
+            resolution: {type: 'v2', value: new THREE.Vector2()},
+            mouse: {type: "v2", value: new THREE.Vector2()}
+        };
+        var material = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader: document.getElementById('vertexShader').textContent,
+            fragmentShader: document.getElementById('fragmentShader').textContent
+        });
+        var mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+        renderer = new THREE.WebGLRenderer();
+        //Hack here to change resolution
+        renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+        container.appendChild(renderer.domElement);
+        onWindowResize();
+        window.addEventListener('resize', onWindowResize, false);
+        window.addEventListener('mousemove', onMouseMove, false);
+
+    }
+
+    function onWindowResize(event) {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        uniforms.resolution.value.x = renderer.domElement.width;
+        uniforms.resolution.value.y = renderer.domElement.height;
+
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        render();
+    }
+
+    function onMouseMove(event) {
+        uniforms.mouse.value.x = 2 * (event.clientX / window.innerWidth);
+        uniforms.mouse.value.y = 2 * (1 - (event.clientY) / window.innerHeight
+        );
+    }
+
+    function render() {
+        uniforms.time.value += 0.01;
+        renderer.render(scene, camera);
+    }
+
+</script>
+</body>
+</html>
