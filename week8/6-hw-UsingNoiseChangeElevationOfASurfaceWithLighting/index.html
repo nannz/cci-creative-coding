@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+     <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body, #container {
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		//============================================================
+		//1. translation
+		//2.
+		//============================================================
+		// switch on high precision floats
+		precision highp float;
+		varying vec3 myNormal;
+		vec3 newPosition;
+		uniform highp vec2 mouse;
+		uniform highp float time;
+        #define M_PI 3.14159265358979323846
+
+        
+		
+		float rand(vec3 x) {
+        // This uses frequency modulation, but with dot product distance to generate
+        // A single value from a vector
+                return abs(101.+sin(cos(dot(x,vec3(1,20,2)))* 10000.));
+        }
+        
+        float rand2d(vec2 pos) {
+        
+        // This uses frequency modulation, but with dot product distance to generate
+        // A single value from a vector
+			return sin(sin(dot(pos * 1123.,vec2(1000.)))* 1000000.);
+
+        }
+
+		void main() {
+
+		    float angle = -1.2;
+		    //rotation
+            mat4 rotateX = mat4(
+				1,0,0,0,
+				0,cos(angle),sin(angle),0,
+				0,-sin(angle),cos(angle),0,
+				0,0,0,1
+			);
+			vec3 translation = vec3(0.0,-0.15,0.0);
+		    
+		    //mat4 scale = mat4(0.33,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,1.0);
+
+            myNormal = normal;
+            
+            float displaceZ = rand2d(position.xy);
+            // this is what is causing the normal issue...
+			//vec3 newPosition = position * (1.0 +(0.2 * (rand(position)))) ;
+		    
+			vec3 newPosition = position;
+		    
+		    newPosition.z = newPosition.z + (displaceZ * 0.01);
+		    
+		    // we need to make the new positions into a vec4 so we can apply the rotation matrix
+		    vec4 rotatedPos4 = rotateX * vec4(newPosition,1.0);
+		    // we're now ready to generate the new normals after the rotation. 
+		    // this is crucial otherwise it will look like our light is also rotating
+		    //myNormal = normalize(rotatedPos4.xyz*1.2);
+
+			vec3 rotatedPos3 = vec3(rotatedPos4);
+			vec3 translatedPos = rotatedPos3 + translation;
+			myNormal = normalize(translatedPos) * 1.2;
+
+            
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(translatedPos,0.5);
+		}
+
+</script>
+	<script id="fragmentShader" type="x-shader/x-fragment">
+		//============================================================
+		//PUT YOUR GLSL CODE HERE
+		//============================================================
+		precision highp float;
+        uniform vec2 mouse;
+        uniform float time;
+        //these values are being passed by the vertex shader
+		varying vec3 myNormal;
+
+		void main() {
+
+			vec3 light = vec3(0.,-0.4,- 0.2);
+            // 👇original code for light
+			//vec3 light = vec3(0.,10.,5.);
+			
+			// Get the normal of the light
+			// Remember the Unit Vector of the light is the direction of the light 
+			vec3 invert = vec3(1.,1.,1.);
+			invert=myNormal * invert;
+			
+			light = normalize(light) * 1.;
+			
+			// return the maximum of either 0, or the squared distance 
+		    float prod = max(0., 0.9* dot(myNormal,light));
+            // use the dot product of the normal and the light
+            // To calculate the shading for the sphere
+			gl_FragColor = vec4(prod, prod, prod, 1.0) + vec4(vec3(0.15),1.);
+			
+		}
+		//============================================================
+		//END OF GLSL CODE
+		//============================================================
+
+</script>
+	<script>
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 1;
+		var container, stats;
+		var camera, scene, renderer;
+		var uniforms;
+		var mesh;
+		init();
+		animate();
+		function init() {
+			container = document.getElementById('container');
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+			camera.position.z = 2;
+			camera.position.y = 0;
+			camera.position.x = 0;
+// 			camera.position.z = 1;
+			scene = new THREE.Scene();
+			var geometry = new THREE.PlaneGeometry(1,1,100,100);//
+			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+			mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution 
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+            //renderer.context.enable(renderer.context.DEPTH_TEST);
+			container.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+		    //mesh.rotation.x += 0.005;
+	        //mesh.rotation.y += 0.01;
+			render();
+		}
+		function onMouseMove( event ) {
+        	uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
+ 	        uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight
+ 	        );
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>
