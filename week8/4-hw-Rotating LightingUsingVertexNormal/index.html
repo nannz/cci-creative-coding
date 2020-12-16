@@ -26,6 +26,7 @@
 		varying vec3 myNormal;
 		vec3 newPosition;
 		uniform highp vec2 mouse;
+		uniform float time;
         #define M_PI 3.14159265358979323846
 
 		
@@ -33,21 +34,37 @@
         // This uses frequency modulation, but with dot product distance to generate
         // A single value from a vector
                 return sin(cos(dot(x,mouse.xyx*1.))* 100.);
-
+			//return cos(dot(x,mouse.xyx*10.))*10.;
         }
 
 		//=====main() for vertex ===//
 		void main() {
-		    
+			float angle = M_PI * time * 0.1;
+
+			//add a matrix 3D to do the rotation
+			mat3 rotation = mat3( //column first!! //around z-axis
+			cos(angle), sin(angle), 0.,
+			-sin(angle), cos(angle), 0.,
+			0.,0.,1.
+			);
+
 			//normal is a built in attribute we can grab
             myNormal = normal;
 
 			//👇原版本, 上一个版本newPos是position + (normal * 0.01);
-			//???what's vec3(1.0,1.4,1.0) for?
-			vec3 newPosition = position * (1.0 -(0.09 * (rand(position)))) * vec3(1.0,1.4,1.0);
-			//ec3 newPosition = position * vec3(1.0,1.4,1.0);//神奇的拉长效果
-		    myNormal = normalize(newPosition);
+			//???what's vec3(1.0,1.4,1.0) for? => cheap way 来调整大小的吧，窗口压缩再拉大点
+			//vec3 newPosition = position * (1.0 -(0.09 * (rand(position)))) * vec3(1.0,1.4,1.0);
+			vec3 newPosition = position *(1.0-0.09*  (rand(position))) ;//* vec3(1.0,1.4,1.0);//神奇的拉长效果
 
+			//try1.☑️☑️  ✅ ☑️do rotation on newPosition
+			newPosition = newPosition * rotation;
+			myNormal = normalize(newPosition);
+
+			//try2. ❌ do rotation on myNormal
+			//the light is rotating
+			//❌ myNormal = myNormal  * rotation;
+
+			//====
             // three.js provides the projection Matrix and the model View matrix. 
             // We just pipe in our positions.
             // We can add a little bit of the normal so that
@@ -70,18 +87,27 @@
         uniform float time;
         //these values are being passed by the vertex shader
 		varying vec3 myNormal;
+		#define M_PI 3.14159265358979323846
 
 		//===main() for fragment
 		void main() {
 
+
             // light changes over time
-			vec3 light = vec3(sin(time),0,1.);
+			//👇original
+			//vec3 light = vec3(sin(time),0,1.);
+			vec3 light = vec3(sin(time),3,1.);
 			
 			// Get the normal of the light
 			// Remember the Unit Vector of the light is the direction of the light
 			light = normalize(light);
-			
-		    float prod = dot(myNormal,light);
+
+			//****can't apply rotation in fragment but in vertex lol
+			/*myNormal = myNormal * rotation;*/
+			float prod = dot(myNormal,light);
+		    //👇original:
+			//float prod = dot(myNormal,light);
+
             // use the dot product of the normal and the light
             // To calculate the shading for the sphere
 			gl_FragColor = vec4(prod, prod, prod, 1.0);

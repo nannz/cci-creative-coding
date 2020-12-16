@@ -94,6 +94,7 @@
 		void main() {
 			float angle = M_PI * time * 0.1;
 
+			//add a matrix 3D to do the rotation
 			mat3 rotation = mat3( //column first!! //around z-axis
 				cos(angle), sin(angle), 0.,
 				-sin(angle), cos(angle), 0.,
@@ -102,8 +103,6 @@
 
 			vec2 normCoord = gl_FragCoord.xy/resolution;
 			float aspect = resolution.x/resolution.y;
-			float mouseNormX = mouse.x/resolution.x;
-			float mouseNormY = mouse.y/resolution.y;
 
 			///*vec2 translate = resolution.xy/2.;
 			//vec2 pos = (gl_FragCoord.xy - translate);*/
