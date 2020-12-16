@@ -20,53 +20,77 @@
 </head>
 <body>
 	<div id="container"></div>
+	<script>
+		/*
+		HOMEWORK:
+		Locate the randfm function.
+		Find where the function is called. Alter the frequency and amplitude. What happens to the patterns at high amplitude? Write a short paragraph describing your observations.
+		Can you work out why this is happening? Try to reason about the process and write it down.
+*/
+
+	</script>
 	<script id="vertexShader" type="x-shader/x-vertex">
 		void main() { gl_Position = vec4( position, 1.0 ); }
 
 </script>
 	<script id="fragmentShader" type="x-shader/x-fragment">
-		//============================================================
+					//============================================================
 		//PUT YOUR GLSL CODE HERE
 		//============================================================
 
-precision mediump float;
-    
-    //These uniforms need to be set up in your management code
-    uniform vec2 resolution;
-    uniform vec2 mouse;
-    uniform float time;
-    #define M_PI 3.14159265358979323846
-     
-     float map(float n, float start1,float stop1,float start2, float stop2){
-			float newVal = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
-			return newVal;
-	 }
-
-    void main(void)
-    {
-		vec2 normCoord = ( gl_FragCoord.xy / resolution.xy ) * 2.0 - 1.0;;
-
-    	float angle = M_PI * mouse.x * time * 0.1;
-    	mat2 rotation = mat2( cos(angle), sin(angle),
-                                -sin(angle), cos(angle));
-		//doing the translate
-		vec2 translate = resolution.xy/2.;
-
-		float modX = 50.0 * abs(sin(time));// * mouse.x;//mouse.x 越大，间隙越小
-		float modY = 0.5 * modX ;//大小决定被cutout的成都
-		vec2 pos = mod(rotation * (gl_FragCoord.xy - translate), vec2(modX)) - vec2(modY);
-
-		pos = pos * abs( 1.0 / (sin( pos.x + cos(pos.y+time)* 0.10 ) * 1.0) );
-    	//dot product is very useful 
-		float dist_squared = dot(pos, pos) * (2.5-mouse.x);//* 1 / (1 - mouse.x);
-
-		float colour = smoothstep(350., 450., dist_squared);
+        precision mediump float;
+        
+        uniform vec2 resolution;
+        uniform vec2 mouse;
+        uniform highp float time;
+        
+        float randfm(float x,float freq, float amp) {
+                return sin((cos(x*freq)*amp));
+        }
+        
+        void main(){
+            
+        	vec2 pos = gl_FragCoord.xy/resolution;
+        
+        //you can do it twice - and it can produce some good results
+        //If you want it to look like noise, you need to increase the amplitude of the modulator
 
 
-		vec3 finalColour = vec3(1.-colour) ;//+ baseColour;
-		gl_FragColor = vec4(finalColour,1.0);
-    }
+			//==the original version
+            float x = randfm(pos.y,10.,10.);
+            float y = randfm(pos.x,10.,10.);
 
+
+			//==1.low freq, low amp
+			//if the freq and amp are small, it's like zooming in放大
+			//if the values are toooooo small, it's so big that the screen is white to grey
+			//float x = randfm(pos.y,1.8,1.8);//x,freq,amp
+			//float y = randfm(pos.x,1.8,1.8);;
+
+			//==2.high freq, low amp
+			//it's like zooming in, the pattern like a fabric pattern lol
+			//if the freq is really really high, the pattern will becomes really dense.
+			/*float x = randfm(pos.y,1000.,5.);
+			float y = randfm(pos.x,1000.,5.);*/
+
+			//==3.low freq, high amp
+			//while in the case of 1 and 2 in which the freq is changing, it was evenly distributed on the screen
+			//however, in this 3, with low freq and high amp, the screen has another kind of pattern. it's like several points rippling around
+			/*float x = randfm(pos.y,5.,1000.);
+			float y = randfm(pos.x,5.,1000.);*/
+
+			//==4.high freq, high amp
+			//in this, the pattern becomes evenly spread again
+			//like a grid
+			//float x = randfm(pos.y,1000.,1000.);
+			//float y = randfm(pos.x,1000.,1000.);
+
+
+            float colour =y + x ;
+            //colour=floor(colour);
+            //colour=fract(colour);
+        	gl_FragColor = vec4(vec3(colour),1.0);
+        }
 		//============================================================
 		//END OF GLSL CODE
 		//============================================================
@@ -74,7 +98,7 @@ precision mediump float;
 </script>
 	<script>
 		//change the resolution here. 1 is highest
-		var pixel_resolution = 5;
+		var pixel_resolution = 2;
 		var container, stats;
 		var camera, scene, renderer;
 		var uniforms;
@@ -113,17 +137,10 @@ precision mediump float;
         	uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
  	        uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight
  	        );
- 	        //console.log(uniforms.mouse.value.x);//mouse.x -> 0~2
-			//console.log(uniforms.resolution.value.x );//331????
         }
 		function render() {
 			uniforms.time.value += 0.01;
 			renderer.render(scene, camera);
-		}
-
-		function map(n, start1, stop1, start2, stop2){
-			const newVal = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
-			return newVal;
 		}
 
 </script>

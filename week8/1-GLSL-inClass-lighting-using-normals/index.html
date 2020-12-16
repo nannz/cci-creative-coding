@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  	<style>
+    <style>
 		body {
 			margin: 0px;
 			background-color: #000000;
@@ -21,7 +21,33 @@
 <body>
 	<div id="container"></div>
 	<script id="vertexShader" type="x-shader/x-vertex">
-		void main() { gl_Position = vec4( position, 1.0 ); }
+		// switch on high precision floats
+		precision highp float;
+		varying vec3 myNormal; //it is an output from vertexShader to my fragment shader
+
+		void main() {
+			//normal is a built in attribute we can grab
+			//normal is the direction factor we want the light to reflect.
+			//more built-in attribute: https://www.opengl.org/sdk/docs/tutorials/ClockworkCoders/attributes.php
+			myNormal = normal;
+			//vec3 newPosition = position + normal;
+
+            // three.js provides the projection Matrix and the model View matrix. 
+            // We just pipe in our positions and add the normal
+            // We add a little bit of the normal so that
+            // we can get direction vectors of the surface
+            // We don't really need to do that all the time
+            // but it's a good technique to be aware of
+
+			//the built-in default attributes and uniforms: https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram
+			float w = 2.0; // the scale; we need to consider scale all the time
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position + (normal * 0.01),w);
+
+			//==========
+			//==Question from Mick=======//
+			//=== Can you change this light position(for now its from the top)?
+
+		}
 
 </script>
 	<script id="fragmentShader" type="x-shader/x-fragment">
@@ -29,44 +55,34 @@
 		//PUT YOUR GLSL CODE HERE
 		//============================================================
 
-precision mediump float;
-    
-    //These uniforms need to be set up in your management code
-    uniform vec2 resolution;
-    uniform vec2 mouse;
-    uniform float time;
-    #define M_PI 3.14159265358979323846
-     
-     float map(float n, float start1,float stop1,float start2, float stop2){
-			float newVal = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
-			return newVal;
-	 }
+ 	
+		precision highp float;
+        uniform vec2 mouse;
+        uniform float time;
+        //these values are being passed by the vertex shader
+		varying vec3 myNormal;
 
-    void main(void)
-    {
-		vec2 normCoord = ( gl_FragCoord.xy / resolution.xy ) * 2.0 - 1.0;;
+		void main() {
 
-    	float angle = M_PI * mouse.x * time * 0.1;
-    	mat2 rotation = mat2( cos(angle), sin(angle),
-                                -sin(angle), cos(angle));
-		//doing the translate
-		vec2 translate = resolution.xy/2.;
+			//******Here is the light.
+            // light from the top
+			vec3 light = vec3(mouse.x * 10.,40.,0.);
+			
+			// Get the normal of the light
+			// Remember the Unit Vector of the light is the direction of the light 
+			
+			light = normalize(light);
 
-		float modX = 50.0 * abs(sin(time));// * mouse.x;//mouse.x 越大，间隙越小
-		float modY = 0.5 * modX ;//大小决定被cutout的成都
-		vec2 pos = mod(rotation * (gl_FragCoord.xy - translate), vec2(modX)) - vec2(modY);
+			//using the normals to create light
+		    float prod = dot(myNormal,light);
+            // use the dot product of the normal and the light
+            // To calculate the shading for the sphere
+			gl_FragColor = vec4(prod, prod, prod, 1.0);
 
-		pos = pos * abs( 1.0 / (sin( pos.x + cos(pos.y+time)* 0.10 ) * 1.0) );
-    	//dot product is very useful 
-		float dist_squared = dot(pos, pos) * (2.5-mouse.x);//* 1 / (1 - mouse.x);
-
-		float colour = smoothstep(350., 450., dist_squared);
-
-
-		vec3 finalColour = vec3(1.-colour) ;//+ baseColour;
-		gl_FragColor = vec4(finalColour,1.0);
-    }
-
+			//if want ambient light, just add a constant value
+			//gl_FragColor = vec4(0.2 + prod, 0.5 + prod, 0.7 + prod, 1.0);
+			//the vec3(0.2,0.5,0.7) is the ambient light
+		}
 		//============================================================
 		//END OF GLSL CODE
 		//============================================================
@@ -74,7 +90,7 @@ precision mediump float;
 </script>
 	<script>
 		//change the resolution here. 1 is highest
-		var pixel_resolution = 5;
+		var pixel_resolution = 2;
 		var container, stats;
 		var camera, scene, renderer;
 		var uniforms;
@@ -85,7 +101,7 @@ precision mediump float;
 			camera = new THREE.Camera();
 			camera.position.z = 1;
 			scene = new THREE.Scene();
-			var geometry = new THREE.PlaneBufferGeometry(2, 2);
+			var geometry = new THREE.SphereBufferGeometry(1,1,100,100);//size x, size y, dim x, dim y 
 			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
 			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
 			var mesh = new THREE.Mesh(geometry, material);
@@ -113,17 +129,10 @@ precision mediump float;
         	uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
  	        uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight
  	        );
- 	        //console.log(uniforms.mouse.value.x);//mouse.x -> 0~2
-			//console.log(uniforms.resolution.value.x );//331????
         }
 		function render() {
 			uniforms.time.value += 0.01;
 			renderer.render(scene, camera);
-		}
-
-		function map(n, start1, stop1, start2, stop2){
-			const newVal = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
-			return newVal;
 		}
 
 </script>

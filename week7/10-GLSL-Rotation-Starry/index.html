@@ -59,15 +59,6 @@ precision mediump float;
 		vec3 finalColor = vec3 ( 1.0, 0.7, 0.9 );//a pink one
 		float width = 40.0;//越大线越细
 
-		//===below the original version
-		//finalColor *= abs( 1.0 / (sin( pos.x + cos(pos.y+time)* 0.10 ) * 40.0) );
-		//===below: only half of the line
-		//finalColor *=  1.0 / (sin( pos.x + cos(pos.y+time)* 0.10 ) * width) ;
-		//===below: the lines goes staight from right to left
-		//finalColor *=  1.0 / (sin( pos.x + time ) * width)  ;
-		//===below: freq变高，会有残影
-		//finalColor *=  1.0 / (sin( cos(pos.x+time) *100.) * width)  ;//
-
 		finalColor *=  1.0 / (sin(pos.x + cos(pos.y+time) *0.1) * width)  ;
 
 		gl_FragColor = vec4( finalColor, 1.0 );

@@ -70,52 +70,53 @@
 			vec2 pos = (gl_FragCoord.xy - translate);//translate to the centre
 			pos = pos/resolution;//get the new normCoordinate pos in the centre
 
-			//cos(length(pos / mouse.y) * 25.);
-			float angle = atan(pos.y,pos.x); //float radius = atan(sin(length(pos * mouse.y) * 25.));
-			float petals = cos(angle*mouse.x * 25.);
 
 			float mouseNormX = mouse.x / resolution.x;
-			float modX = 2.0* (1.+mouseNormX); ;//* abs(cos(time*0.1 +1.)) ;//* (1.+mouseNormX);越大，间隙越小
+			float modX = 0.5 * (1.+mouseNormX); ;//* abs(cos(time*0.1 +1.)) ;//* (1.+mouseNormX);越大，间隙越小
 			float modY = 0.5 * modX ;//大小决定被cutout的成都
 
 			vec3 finalColor;
-			//vec3 colour = vec3(step(petals,radius) ) * finalColor;
 			float stepVal = 10.;
 			float smoothVal = stepVal * 0.1;
 			float i2 = 0.0;
 
 			for (int i=0; i < 3; i ++){
-				vec2 pTemp =  pos;//mod(pos, vec2(modX)) - vec2(modY);// pos;
+				vec2 p = gl_FragCoord.xy;
+				vec2 pTemp =  pos;
+
 				float l = dot(pTemp,pTemp);
 
 				//=====effect 2
-				pTemp = pTemp /  l*(sin(time)+1.)* abs(sin( l*i2*i2- time));
+				//pTemp = pTemp /  l*(sin(time)+1.)* abs(sin( l*i2*i2- time));
+				p += pTemp /  l*(sin(time)+1.)* abs(sin( l*i2*i2- time));
+
+				l *= sin(time * l )+0.9;//0.1 * sin(time * l * 0.1)* 0.5 + 0.5;
 
 				vec2 pTemp2 = mod(pos, vec2(modX)) - vec2(modY);
-				float timeOffset = time * (0.5 + abs(sin(time)));
+				float timeOffset = (0.5 + abs(sin(time)));//* time
 				pTemp2 += pos/l*(sin(timeOffset)+1.)*abs(sin(l *i2*i2 - timeOffset*2.));
 
 				//====effect 1
-//				vec2 pTemp = mod(pos, vec2(modX)) - vec2(modY);
+//				vec2 pTemp = mod(pors, vec2(modX)) - vec2(modY);
 //				float l = dot(pTemp,pTemp);
 //				float colour = smoothstep(stepVal, stepVal+smoothVal, l);
 //				float radius = length(l)* 5.0 * pow(l , i2);//float pow(float x, float y) = x^y
 //				pTemp *= abs(sin(l*time*0.1));
 
-//				vec3 color2 = .05 * (1. + i2)/length(log(pTemp2));
-				finalColor[i] = .01 * (1. + i2)/length(log(pTemp)) + .01 * (1. + i2)/length(log(pTemp2));//exp(pTemp
-				//c[i]=.01/length(abs(mod(uv,1.)-.5));
+				finalColor[i] = .01 * (1. + i2)/length(sin(pTemp));//a blue shiny ball
+				finalColor[i] +=.01 * (1. + i2)/length(cos(pTemp2));//exp(pTemp
+				//finalColor[i] = .01 / length(abs(mod(p,1.)-0.5)) ;//+ .01 * (1. + i2)/length(log(pTemp2));
 				i2 += 1.0;
 			}
 
-			gl_FragColor=vec4(finalColor,exp(sin(time*0.1)));
+			gl_FragColor=vec4(finalColor,1.0);//exp(sin(time*0.1)));//change the alpha doesn't make change...
 
 
 			//===========BELOW IS THE SHADER
 			/*
 			The shader inspired me: Danilo Guanabara
+			https://www.shadertoy.com/view/XsXXDn
 			*/
-
 
         }
 		//============================================================

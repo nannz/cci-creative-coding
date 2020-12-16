@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+     <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body, #container {
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	<script id="vertexShader" type="x-shader/x-vertex">
+
+		void main() {
+	        gl_Position = vec4(position,1.0) ;                
+		}
+
+</script>
+	<script id="fragmentShader" type="x-shader/x-fragment">
+		//============================================================
+		//PUT YOUR GLSL CODE HERE
+		//============================================================
+
+            precision mediump float;
+            
+            uniform float time;
+            uniform vec2 resolution;
+            uniform vec2 mouse;
+            
+            void main()
+            {
+                // This is the value of c 
+                // The size, 4, is important
+                // as it scales the entire grid to within -2. and 2.
+                // which is where the mandelbrot is located in space.
+            	vec2 c=(gl_FragCoord.xy-resolution/2.)/resolution.x*4.0*(-0.25*mouse.x) + (1.0-mouse.y);
+            	//vec2 c=((gl_FragCoord.xy-resolution/2.)/resolution.x*4.)+vec2(mouse);
+            	
+            	//c = mouse;
+            	
+            	// now we initialise the colour.
+            	// the colour value is actually the number of iterations
+            	// that we have to compute before the squared result is over the square root of 4.
+            	// these are the things they don't tell you in maths textbooks. who knew?
+            	
+            	float colour=0.;
+            	
+            	// this vector is going to be z. we start at zero. 
+            	// so the calculation is the same for each pixel
+            	// it actually doesn't matter much what value you start with.
+            	vec2 z=vec2(0.);
+            	
+            	// now we compute the equation a few times to see if this 
+            	// squared value goes over 2, and if it does
+            	// the number of iterations is how long it took.
+            	// remember - we use this to specify the colour.
+            	
+            	for(int i=0;i<200;i++){
+            	    
+            	    //iterate the colour value
+            		colour++;
+            		
+            		// if the squared result is over 2, exit the loop
+            		// actually we are using dot product which returns
+            		// how aligned the vectors are - which is close enough
+            		
+            		
+            		// you can actually increase the number 2. 
+            		// to something bigger or smaller.
+            		// try it. 4 is standard actually
+            		
+            		if(dot(z,z) > 2.){break;}
+            		
+            		// if we're still in the loop, 
+            		// before we run it again, 
+            		// use the equation to compute a new value of z.
+            		
+            		
+            		z=vec2(z.x*z.x-z.y*z.y,2.*z.x*z.y)+c;
+            	}
+            	// once we're done, use the colour value to set the pixel colour.
+            	gl_FragColor=vec4(vec3(colour/100.),1.);
+            }
+
+
+		//============================================================
+		//END OF GLSL CODE
+		//============================================================
+
+</script>
+	<script>
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 1;
+		var container, stats;
+		var camera, scene, renderer;
+		var uniforms;
+		init();
+		animate();
+		function init() {
+			container = document.getElementById('container');
+			camera = new THREE.Camera();
+			camera.position.z = 1;
+			scene = new THREE.Scene();
+			var geometry = new THREE.PlaneBufferGeometry(2,2);
+			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+			var mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution 
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+			container.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+			render();
+		}
+		function onMouseMove( event ) {
+        	uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
+ 	        uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight
+ 	        );
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+     <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body, #container {
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		// switch on high precision floats
+		precision highp float;
+		varying vec3 myNormal; //it is an output from vertexShader to my fragment shader
+		vec3 newPosition;
+		uniform highp vec2 mouse;
+
+		float rand(vec3 x) {
+			// This uses **frequency modulation**, but with dot product distance to generate a single value from a vector
+			return sin(cos(dot(x,mouse.xyx*1.))* 100.);
+		}
+		float randfm(float x,float freq, float amp) {
+			return sin((cos(x*freq)*amp));
+		}
+
+
+		void main() {
+			//============================================================
+			//PUT YOUR GLSL CODE HERE
+			//2/2、Try to generate a random value and add it to the normal - what is another name for this process?
+			//============================================================
+
+			//normal is a built in attribute we can grab
+			//normal is the direction factor we want the light to reflect.
+			//more built-in attribute: https://www.opengl.org/sdk/docs/tutorials/ClockworkCoders/attributes.php
+			vec3 newPosition = normal * rand(position);
+			myNormal = normalize(newPosition);//vec3
+			//myNormal = normal;
+			//vec3 newPosition = position + normal;
+
+            // three.js provides the projection Matrix and the model View matrix.
+			//threejs在做一个geometry的时候自动就有了包括position，normal，modelViewMatrix等参数
+			//https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram
+			//我们直接用就好了
+            // We just pipe in our positions and add the normal
+            // We add a little bit of the normal so that
+            // we can get direction vectors of the surface
+            // We don't really need to do that all the time
+            // but it's a good technique to be aware of
+
+			//the built-in default attributes and uniforms: https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram
+			float w = 2.0; // the scale; we need to consider scale all the time
+//			vec3 newPosition = position + (normal * 0.01);
+			//the original code👇 ,add the (normal* 0.01) to the position
+			////cause the effect like 2D
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition,w);
+
+
+			//==========
+			//==Question from Mick=======//
+			//=== Can you change this light position(for now its from the top)?
+
+		}
+
+</script>
+	<script id="fragmentShader" type="x-shader/x-fragment">
+		//============================================================
+		//PUT YOUR GLSL CODE HERE
+		//1/2、make changes so that you can rotate the lighting. ==> make a mat3 matrix to do the rotaiton in which the angle changes over time.
+		//============================================================
+
+		precision highp float;
+
+		uniform vec2 resolution;
+        uniform vec2 mouse;
+        //these values are being passed by the vertex shader
+		varying vec3 myNormal;
+
+		uniform float time;
+		#define M_PI 3.14159265358979323846
+
+		void main() {
+			float angle = M_PI * time * 0.1;
+
+			mat3 rotation = mat3( //column first!! //around z-axis
+				cos(angle), sin(angle), 0.,
+				-sin(angle), cos(angle), 0.,
+				0.,0.,1.
+			);
+
+			vec2 normCoord = gl_FragCoord.xy/resolution;
+			float aspect = resolution.x/resolution.y;
+			float mouseNormX = mouse.x/resolution.x;
+			float mouseNormY = mouse.y/resolution.y;
+
+			///*vec2 translate = resolution.xy/2.;
+			//vec2 pos = (gl_FragCoord.xy - translate);*/
+
+			//#### trying to calculate the light direction from the centre of the screen, but didn't work
+			/*
+			vec2 posCentre = resolution.xy/2.;
+			//float mouseNormX = mouse.x/resolution.x;
+			vec2 lightDirection2D = mouse - posCentre;
+			vec3 lightAroundCentre = vec3(lightDirection2D.x,lightDirection2D.y,0.);
+			lightAroundCentre = normalize(lightAroundCentre);
+			float prod = dot(myNormal,lightAroundCentre);
+			*/
+
+			//1. ******Here is the light.
+            // light from the top: vec3 light = vec3(mouse.x * 10.,40.,0.);
+			vec3 light = rotation * vec3( 10.,40.,0.) ;
+			// 2. ******Get the normal of the light, normalize() is a built-in function
+			// Remember the Unit Vector of the light is the direction of the light 
+			// more built-in functions: https://www.shaderific.com/glsl-functions
+			light = normalize(light);
+			//3. ******using the normals to create light
+		    float prod = dot(myNormal,light);
+
+            //4.******use the dot product of the normal and the light
+            // To calculate the shading for the sphere
+			gl_FragColor = vec4(prod, prod, prod, 1.0);
+
+			//if want ambient light, just add a constant value
+			//gl_FragColor = vec4(0.2 + prod, 0.5 + prod, 0.7 + prod, 1.0);
+			//the vec3(0.2,0.5,0.7) is the ambient light
+		}
+		//============================================================
+		//END OF GLSL CODE
+		//============================================================
+
+</script>
+	<script>
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 2;
+		var container, stats;
+		var camera, scene, renderer;
+		var uniforms;
+		init();
+		animate();
+		function init() {
+			container = document.getElementById('container');
+			camera = new THREE.Camera();
+			camera.position.z = 1;
+			scene = new THREE.Scene();
+
+			//var geometry = new THREE.SphereBufferGeometry(1,1,100,100);//size x, size y, dim x, dim y
+			var geometry = new THREE.SphereBufferGeometry(1,1,100,100);
+			uniforms = {
+				time: { type: 'f', value: 1.0 },
+				resolution: { type: 'v2', value: new THREE.Vector2() },
+				mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+			var mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution 
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+			container.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+			render();
+		}
+		function onMouseMove( event ) {
+        	uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
+ 	        uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight
+ 	        );
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>
