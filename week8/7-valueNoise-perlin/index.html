@@ -44,18 +44,19 @@
             return fract(cos(dot(n,vec2(36.26,73.12)))*354.63);
         }
         
-        float noise(vec2 n)
+        float noise(vec2 n) //n = gl_FragCoord.xy
         {
             // This part is crucial as it provides a more coherent low frequency component
-            // Try removing it to see what happens
-            vec2 fn = floor(n);
+            // Try removing it to see what happens => very very dense noise field
+            vec2 fn = floor(n);//vec2 fn = n;
+
             // Because we are using smoothstep, we are interpolating betwee
             vec2 sn = smoothstep(vec2(0),vec2(1),fract(n));
-             //vec2 sn = step(vec2(0),fract(n));
+             //vec2 sn = step(vec2(0),fract(n)); //=> 马赛克
             
             // now we create two interacting mixtures of noise, sampled across the space in blocks
             // and interpolated across one another.
-            // This is the value noise part..
+            // ❕❕❕❕👉 ❗️❗️This is the value noise part..
             float h1 = mix(r(fn),r(fn+vec2(1,0)),sn.x);
             float h2 = mix(r(fn+vec2(0,1)),r(fn+vec2(1)),sn.x);
             return mix(h1,h2,sn.y);
@@ -63,12 +64,18 @@
 
         // it's not really perlin noise because we're using value noise approaches 
         // i.e. interpolating between blocks of random values
-        // perlin noise is gradient noise - which basically means it's a number of derivatives 
-        // summed together, and not just a bunch of numbers being interpolated.
-        // Try messing with the divisors to see how it changes the outcomes. 
-        // There are lots of carefully balanced frequencies of noise interacting...
-        
-        float perlin(vec2 n) {  
+        // perlin noise is gradient noise - which basically means
+        //❕❕❕❕👉 it's a number of derivatives summed together,
+		//and not just a bunch of numbers being interpolated.
+        // Try messing with the divisors to see how it changes the outcomes. There are lots of carefully balanced frequencies of noise interacting...
+        float perlin(vec2 n) {
+			float noise1 = noise(n/64.)*0.5875;//noise(n/32.)*0.5875;// 分母越小，图像越密
+			float noise2 = noise(n/16.)/5.;//16。//分母变化时，里面的纹理会变
+			float noise3 = noise(n/8.)/10.;//8。
+			float noise4 = noise(n/4.)/20.;
+			float noise5 = noise(n/2.)/40.;//2.//分母变化时没大感觉，纹理细致度的变化
+			float noise6 = noise(n)/80.;
+			return noise1+noise2+noise3+noise4+noise5+noise6;
             return noise(n/32.)*0.5875+noise(n/16.)/5.+noise(n/8.)/10.+noise(n/4.)/20.+noise(n/2.)/40.+noise(n)/80.;
         }        
         

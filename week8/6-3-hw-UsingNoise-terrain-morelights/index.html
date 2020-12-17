@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+     <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body, #container {
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		//============================================================
+		//1. translation (i changed the position and change the light in fragment as well)
+		//2. improve the noise
+		//============================================================
+		// switch on high precision floats
+		precision highp float;
+		varying vec3 myNormal;
+		vec3 newPosition;
+		uniform highp vec2 mouse;
+		uniform highp float time;
+		uniform vec2 resolution;
+        #define M_PI 3.14159265358979323846
+		
+		float rand(vec3 x) {
+                return abs(101.+sin(cos(dot(x,vec3(1,20,2)))* 10000.));
+        }
+        float rand2d(vec2 pos) {
+			return sin(sin(dot(pos * 1123.,vec2(1000.)))* 1000000.);
+        }
+
+		//============================================================
+		//https://thebookofshaders.com/11/
+		float random (vec2 st) {
+			float modulator =dot(st.xy , vec2(12.9898  ,78.233));//* mouse.x/resolution.x
+			float moduIndex = 437580.54* mouse.x/resolution.x;
+			//👇original code： st is the position.xy
+			//return fract(sin(modulator) * moduIndex);
+			//👇try the sin wave inside another sinWave
+//			return fract(sin(sin(modulator) * moduIndex));
+			return sin(sin(modulator) * moduIndex);
+		}
+
+		float noise(vec2 st){
+			//❕🌟❕ work了！
+			st *= 20.;
+			vec2 i = floor(st);
+			vec2 f = fract(st);
+			// Four corners in 2D of a tile
+			float a = random(i);//rand2d(i);
+			//❕🌟❕😓好像不work//I divided the 4 points by 100., which is the widthSegment and the heightSegment of this plane
+			float b = random(i + vec2(1.0, 0.0));//random(i + vec2(vec2(1.0, 0.0))/100.);//rand2d(i + vec2(1.0, 0.0));//
+			float c = random(i + vec2(0.0, 1.0));//vec2(vec2(0.0, 1.0))/100.);//rand2d(i + vec2(0.0, 1.0));//
+			float d = random(i + vec2(1.0, 1.0));//vec2(vec2(1.0, 1.0))/100.);//rand2d(i + vec2(1.0, 1.0));//
+
+			//=1. Cubic Hermine Curve.  Same as SmoothStep()
+			//vec2 u = f*f*(3.0-2.0*f);
+			//=2// u = smoothstep(0.,1.,f);
+			//=3.Quintic interpolation curve
+			vec2 u = f*f*f*(f*(f*6.-15.)+10.);
+
+			// Mix 4 coorners percentages
+			//formula for mix(x,y,a):x×(1−a)+y×a.
+			return mix(a, b, u.x) +
+			(c - a)* u.y * (1.0 - u.x) +
+			(d - b) * u.x * u.y;
+		}
+
+
+		//============================================================
+
+		void main() {
+
+		    float angle = -1.2;
+		    //rotation
+            mat4 rotateX = mat4(
+				1,0,0,0,
+				0,cos(angle),sin(angle),0,
+				0,-sin(angle),cos(angle),0,
+				0,0,0,1
+			);
+			vec4 translation = vec4(0.0,-0.15,0.0,0.0);
+		    
+		    //mat4 scale = mat4(0.33,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,1.0);
+
+            myNormal = normal;
+
+			//👇original code:
+            float displaceZ = rand2d(position.xy);
+            // ❗️🈲️this is what is causing the normal issue...
+			//vec3 newPosition = position * (1.0 +(0.2 * (rand(position)))) ;
+
+			vec3 newPosition = position;
+		    float myDisplaceZ = noise(position.xy);
+		    //newPosition.z = newPosition.z + (displaceZ * 0.01);
+			newPosition.z = newPosition.z + (myDisplaceZ * 0.12);//❗️❕freq不够高！！！
+
+		    
+		    // we need to make the new positions into a vec4 so we can apply the rotation matrix
+		    vec4 rotatedPos4 = rotateX * vec4(newPosition,1.0);
+		    // we're now ready to generate the new normals after the rotation,  is crucial otherwise it will look like our light is also rotating
+		    //myNormal = normalize(rotatedPos4.xyz*1.2);
+
+			//vec3 rotatedPos3 = vec3(rotatedPos4);
+			vec4 translatedPos = rotatedPos4 + translation;
+			myNormal = normalize(translatedPos.xyz * 1.2) ;
+
+            
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(translatedPos.xyz,0.5);
+		}
+
+</script>
+	<script id="fragmentShader" type="x-shader/x-fragment">
+		//============================================================
+		//PUT YOUR GLSL CODE HERE
+		//============================================================
+		precision highp float;
+        uniform vec2 mouse;
+        uniform float time;
+        //these values are being passed by the vertex shader
+		varying vec3 myNormal;
+		//============================================================
+		// from the valueNoise example: https://mimicproject.com/code/afaa5b2b-e48a-441b-85f4-050e344cd967
+		float r(vec2 n){
+			//This is basically the same as the noise we used before.
+			//It has some specific values in it for frequency that work well.
+			return fract(cos(dot(n,vec2(36.26,73.12)))*354.63);
+		}
+		float noise(vec2 n){
+			// This part is crucial as it provides a more coherent low frequency component
+			vec2 fn = floor(n);
+			// Because we are using smoothstep, we are interpolating betwee
+			vec2 sn = smoothstep(vec2(0),vec2(1),fract(n));//vec2 sn = step(vec2(0),fract(n));
+
+			// now we create two interacting mixtures of noise, sampled across the space in blocks and interpolated across one another.
+			// ❕❕❕❕👉 This is the value noise part..
+			//mix(x,y,a) = x*(1−a)+y*a
+			//in mix(x,y,a), x is the start of the range, y is the end, a is the value to interpolate.
+			float h1 = mix(r(fn),r(fn+vec2(1,0)),sn.x);
+			float h2 = mix(r(fn+vec2(0,1)),r(fn+vec2(1)),sn.x);
+			return mix(h1,h2,sn.y);
+		}
+		float perlin(vec2 n) {
+			float noise1 = noise(n/32.)*0.5875;// 分母越小，图像越密
+			float noise2 = noise(n/16.)/5.;//分母变化时，里面的纹理会变
+			float noise3 = noise(n/8.)/10.;
+			float noise4 = noise(n/4.)/20.;
+			float noise5 = noise(n/2.)/40.;//分母变化时没大感觉，纹理细致度的变化
+			float noise6 = noise(n)/80.;
+			return noise1+noise2+noise3+noise4+noise5+noise6;
+		}
+
+		void main() {
+
+			vec3 light = vec3(0.,-0.4,- 0.2);
+			vec3 light2 = vec3(0.1* sin(time),-0.6* sin(time),- 0.2);
+            // 👇original code for light
+			//vec3 light = vec3(0.,10.,5.);
+			
+			// Get the normal of the light
+			// Remember the Unit Vector of the light is the direction of the light 
+			vec3 invert = vec3(1.,1.,1.);
+			invert=myNormal * invert;
+			
+			light = normalize(light) * 1.;
+			
+			// return the maximum of either 0, or the squared distance 
+		    float prod = max(0., 0.9* dot(myNormal,light));
+			//try to add another light
+			float prod2 = max(0., 0.9* dot(myNormal,light2));
+			prod = (prod + prod2) * 0.5;
+
+			//try get the perlin here.
+			float noiseColor = float(perlin(gl_FragCoord.xy)) * 0.1;
+			float finalColor = float(prod + noiseColor);
+            // use the dot product of the normal and the light
+            // To calculate the shading for the sphere
+			//try of ambient light;
+			vec3 ambient = vec3(abs(sin(time))*0.15,0.2,0.1);
+			gl_FragColor = vec4(vec3(finalColor), 1.0) + vec4(vec3(0.05),1.) + vec4(ambient,1.);
+			//gl_FragColor = vec4(prod, prod, prod, 1.0) + vec4(vec3(0.15),1.);
+			
+		}
+		//============================================================
+		//END OF GLSL CODE
+		//============================================================
+
+</script>
+	<script>
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 1;
+		var container, stats;
+		var camera, scene, renderer;
+		var uniforms;
+		var mesh;
+		init();
+		animate();
+		function init() {
+			container = document.getElementById('container');
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+			camera.position.z = 2;
+			camera.position.y = 0;
+			camera.position.x = 0;
+// 			camera.position.z = 1;
+			scene = new THREE.Scene();
+			var geometry = new THREE.PlaneGeometry(1,1,100,100);//width = height = 1, widthSegments = heightSegments = 100;
+			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+			mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution 
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+            //renderer.context.enable(renderer.context.DEPTH_TEST);
+			container.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+		    //mesh.rotation.x += 0.005;
+	        //mesh.rotation.y += 0.01;
+			render();
+		}
+		function onMouseMove( event ) {
+        	uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
+ 	        uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight
+ 	        );
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>
