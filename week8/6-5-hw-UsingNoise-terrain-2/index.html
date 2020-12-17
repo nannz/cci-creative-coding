@@ -33,14 +33,7 @@
 		uniform highp float time;
 		uniform vec2 resolution;
         #define M_PI 3.14159265358979323846
-		uniform vec3 u_lightWorldPosition;//https://webglfundamentals.org/webgl/lessons/webgl-3d-lighting-point.html
-		varying vec3 v_surfaceToLight;
-//		varying vec3 lightWorld ;
-//		vec3 lightWorldPosition = vec3(0.,0.5,0.25);
-		// = camera.matrixWorldInverse
-		//uniform mat4 viewMatrix;
-		//uniform vec3 cameraPosition;
-
+		
 		float rand(vec3 x) {
                 return abs(101.+sin(cos(dot(x,vec3(1,20,2)))* 10000.));
         }
@@ -52,17 +45,17 @@
 		//https://thebookofshaders.com/11/
 		float random (vec2 st) {
 			float modulator =dot(st.xy , vec2(12.9898  ,78.233));//* mouse.x/resolution.x
-			float moduIndex = 437580.54* mouse.x/resolution.x;
+			float moduIndex = 43758.54* mouse.x/resolution.x;
 			//👇original code： st is the position.xy
 			//return fract(sin(modulator) * moduIndex);
 			//👇try the sin wave inside another sinWave
-//			return fract(sin(sin(modulator) * moduIndex));
-			return sin(sin(modulator) * moduIndex);
+			return fract(sin(sin(modulator) * moduIndex));
+//			return sin(sin(modulator) * moduIndex);
 		}
 
 		float noise(vec2 st){
 			//❕🌟❕ work了！
-			st *= 20.;
+			st *= 50.;
 			vec2 i = floor(st);
 			vec2 f = fract(st);
 			// Four corners in 2D of a tile
@@ -85,6 +78,7 @@
 			(d - b) * u.x * u.y;
 		}
 
+
 		//============================================================
 
 		void main() {
@@ -101,13 +95,6 @@
 		    
 		    //mat4 scale = mat4(0.33,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,1.0);
 
-			//============================================================
-			//try compute the surface in the world
-			// compute the world position of the surface
-//			vec3 surfaceWorldPosition = (projectionMatrix * position).xyz;
-//			v_surfaceToLight = lightWorldPosition - surfaceWorldPosition;
-
-			//============================================================
             myNormal = normal;
 
 			//👇original code:
@@ -118,7 +105,7 @@
 			vec3 newPosition = position;
 		    float myDisplaceZ = noise(position.xy);
 		    //newPosition.z = newPosition.z + (displaceZ * 0.01);
-			newPosition.z = newPosition.z + (myDisplaceZ * 0.12);//❗️❕freq不够高！！！
+			newPosition.z = newPosition.z + (myDisplaceZ * 0.04);//❗️❕freq不够高！！！
 
 		    
 		    // we need to make the new positions into a vec4 so we can apply the rotation matrix
@@ -131,7 +118,7 @@
 			myNormal = normalize(translatedPos.xyz * 1.2) ;
 
             
-			gl_Position = projectionMatrix  * modelViewMatrix * vec4(translatedPos.xyz,0.5);
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(translatedPos.xyz,0.5);
 		}
 
 </script>
@@ -144,11 +131,6 @@
         uniform float time;
         //these values are being passed by the vertex shader
 		varying vec3 myNormal;
-		//varying vec3 lightWorld ;//= vec3(0.,-0.4,- 0.2);
-
-//		uniform mat4 viewMatrix;// = camera.matrixWorldInverse
-//		uniform vec3 cameraPosition;
-
 		//============================================================
 		// from the valueNoise example: https://mimicproject.com/code/afaa5b2b-e48a-441b-85f4-050e344cd967
 		float r(vec2 n){
@@ -183,32 +165,27 @@
 		void main() {
 
 			vec3 light = vec3(0.,-0.4,- 0.2);
-			vec3 light2 = vec3(0.1* sin(time),-0.6* sin(time),- 0.2);
+			vec3 light2 = vec3(1.0* sin(time),-0.2* sin(time)+0.1,- 0.2);
             // 👇original code for light
 			//vec3 light = vec3(0.,10.,5.);
 			
 			// Get the normal of the light
 			// Remember the Unit Vector of the light is the direction of the light 
 			vec3 invert = vec3(1.,1.,1.);
-			invert= myNormal * invert;
+			invert=myNormal * invert;
 			
-			light = normalize(light) * 1.;
-//			lightWorld = normalize(lightWorld) * 1.;
+			light = normalize(light) * 0.9;
+			light2 = normalize(light2) * 0.6;
 			
 			// return the maximum of either 0, or the squared distance 
 		    float prod = max(0., 0.9* dot(myNormal,light));
-			//try to add another light
 			float prod2 = max(0., 0.9* dot(myNormal,light2));
-			prod = (prod + prod2) * 0.5;
-
-			//try get the perlin here.
-			float noiseColor = float(perlin(gl_FragCoord.xy)) * 0.1;
+			prod = prod+prod2;
+			float noiseColor = 0.0;//float(perlin(gl_FragCoord.xy)) * 0.1;
 			float finalColor = float(prod + noiseColor);
             // use the dot product of the normal and the light
             // To calculate the shading for the sphere
-			//try of ambient light;
-			vec3 ambient = vec3(abs(sin(time))*0.15,0.2,0.1);
-			gl_FragColor = vec4(vec3(finalColor), 1.0) + vec4(vec3(0.05),1.) + vec4(ambient,1.);
+			gl_FragColor = vec4(vec3(finalColor), 1.0) + vec4(vec3(0.15),1.);
 			//gl_FragColor = vec4(prod, prod, prod, 1.0) + vec4(vec3(0.15),1.);
 			
 		}
@@ -235,15 +212,8 @@
 // 			camera.position.z = 1;
 			scene = new THREE.Scene();
 			var geometry = new THREE.PlaneGeometry(1,1,100,100);//width = height = 1, widthSegments = heightSegments = 100;
-			uniforms = {
-				time: { type: 'f', value: 1.0 },
-				resolution: { type: 'v2', value: new THREE.Vector2() },
-				mouse: {type: "v2", value: new THREE.Vector2()}
-			};
-			var material = new THREE.ShaderMaterial({
-				uniforms: uniforms,
-				vertexShader: document.getElementById('vertexShader').textContent,
-				fragmentShader: document.getElementById('fragmentShader').textContent });
+			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
 			mesh = new THREE.Mesh(geometry, material);
 			scene.add(mesh);
 			renderer = new THREE.WebGLRenderer();
