@@ -89,14 +89,20 @@
 			float value = 0.0;
 			float amp = 0.5;
 //			float freq = 0.;
-			float gain = 1.1;
-			float lac = 2.5;//2.
+			float gain = 0.7;
+			float lac = 2.2;//2.
 			for (int i = 0;i<numOfOctaves;i++){
 				value += amp * noise(st);
 				st *= lac;//lacunarity 越多越密
 				amp *= gain;//gain 振幅的高低
 			}
 			return value;
+		}
+
+		float flowNoise(vec2 st){
+			vec2 st2 = vec2(fractalBrownianMotion( st+vec2(sin(time*0.003)*time*0.1) ),//+ vec2(0.01,0.3)),//vec2(sin(time*0.04)*0.2)),
+								fractalBrownianMotion( st + vec2(sin(time*0.003+0.001)*time*0.05) ));//+ vec2(0.5,0.7)));//vec2(sin(sin(time*0.02)*0.1),sin(time*0.02)*0.1)));
+			return fractalBrownianMotion(st + 2.0 * st2);
 		}
 		//============================================================
 		//vertex shader main()
@@ -124,9 +130,11 @@
 
 			//👇 my original noise code:
 		    float myDisplaceZ = noise(position.xy);
-
+			//👇 my fbm noise code:
 			float myFractalZ = fractalBrownianMotion(position.xy);
-			newPosition.z =newPosition.z + myFractalZ*0.05;
+			float myFlowZ = flowNoise(position.xy);
+			newPosition.z =newPosition.z + myFlowZ*0.05;
+//			newPosition.z =newPosition.z + myFractalZ*0.05;
 			//newPosition.z = newPosition.z + (displaceZ * 0.01);
 //			newPosition.z = newPosition.z + (myDisplaceZ * 0.04);//❗️❕freq不够高！！！
 
@@ -155,36 +163,7 @@
         //these values are being passed by the vertex shader
 		varying vec3 myNormal;
 
-		//============================================================
-		// from the valueNoise example: https://mimicproject.com/code/afaa5b2b-e48a-441b-85f4-050e344cd967
-		float r(vec2 n){
-			//This is basically the same as the noise we used before.
-			//It has some specific values in it for frequency that work well.
-			return fract(cos(dot(n,vec2(36.26,73.12)))*354.63);
-		}
-		float noise(vec2 n){
-			// This part is crucial as it provides a more coherent low frequency component
-			vec2 fn = floor(n);
-			// Because we are using smoothstep, we are interpolating betwee
-			vec2 sn = smoothstep(vec2(0),vec2(1),fract(n));//vec2 sn = step(vec2(0),fract(n));
 
-			// now we create two interacting mixtures of noise, sampled across the space in blocks and interpolated across one another.
-			// ❕❕❕❕👉 This is the value noise part..
-			//mix(x,y,a) = x*(1−a)+y*a
-			//in mix(x,y,a), x is the start of the range, y is the end, a is the value to interpolate.
-			float h1 = mix(r(fn),r(fn+vec2(1,0)),sn.x);
-			float h2 = mix(r(fn+vec2(0,1)),r(fn+vec2(1)),sn.x);
-			return mix(h1,h2,sn.y);
-		}
-		float perlin(vec2 n) {
-			float noise1 = noise(n/32.)*0.5875;// 分母越小，图像越密
-			float noise2 = noise(n/16.)/5.;//分母变化时，里面的纹理会变
-			float noise3 = noise(n/8.)/10.;
-			float noise4 = noise(n/4.)/20.;
-			float noise5 = noise(n/2.)/40.;//分母变化时没大感觉，纹理细致度的变化
-			float noise6 = noise(n)/80.;
-			return noise1+noise2+noise3+noise4+noise5+noise6;
-		}
 
 		void main() {
 
@@ -209,7 +188,11 @@
 			float finalColor = float(prod + noiseColor);
             // use the dot product of the normal and the light
             // To calculate the shading for the sphere
-			gl_FragColor = vec4(vec3(finalColor), 1.0) + vec4(vec3(0.15),1.);
+
+			//try the ambient light
+			vec3 ambient = vec3(0.2,0.4,abs(sin(time))+0.7);
+
+			gl_FragColor = vec4(vec3(finalColor), 1.0) + vec4(ambient,0.8);//+ vec4(vec3(0.15),1.)
 			//gl_FragColor = vec4(prod, prod, prod, 1.0) + vec4(vec3(0.15),1.);
 			
 		}
