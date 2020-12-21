@@ -122,7 +122,6 @@
 			vec3 light = rotation * vec3( 10.,40.,0.) ;
 			// 2. ******Get the normal of the light, normalize() is a built-in function
 			// Remember the Unit Vector of the light is the direction of the light 
-			// more built-in functions: https://www.shaderific.com/glsl-functions
 			light = normalize(light);
 			//3. ******using the normals to create light
 		    float prod = dot(myNormal,light);
@@ -164,7 +163,7 @@
 			var mesh = new THREE.Mesh(geometry, material);
 			scene.add(mesh);
 			renderer = new THREE.WebGLRenderer();
-			//Hack here to change resolution 
+			//Hack here to change resolution
 			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
 			container.appendChild(renderer.domElement);
 			onWindowResize();

@@ -33,7 +33,7 @@
 		uniform highp float time;
 		uniform vec2 resolution;
         #define M_PI 3.14159265358979323846
-		
+
 		float rand(vec3 x) {
                 return abs(101.+sin(cos(dot(x,vec3(1,20,2)))* 10000.));
         }
@@ -60,7 +60,7 @@
 			vec2 f = fract(st);
 			// Four corners in 2D of a tile
 			float a = random(i);//rand2d(i);
-			//❕🌟❕😓好像不work//I divided the 4 points by 100., which is the widthSegment and the heightSegment of this plane
+			//😓好像不work//I divided the 4 points by 100., which is the widthSegment and the heightSegment of this plane
 			float b = random(i + vec2(1.0, 0.0));//random(i + vec2(vec2(1.0, 0.0))/100.);//rand2d(i + vec2(1.0, 0.0));//
 			float c = random(i + vec2(0.0, 1.0));//vec2(vec2(0.0, 1.0))/100.);//rand2d(i + vec2(0.0, 1.0));//
 			float d = random(i + vec2(1.0, 1.0));//vec2(vec2(1.0, 1.0))/100.);//rand2d(i + vec2(1.0, 1.0));//
@@ -92,7 +92,7 @@
 				0,0,0,1
 			);
 			vec4 translation = vec4(0.0,-0.15,0.0,0.0);
-		    
+
 		    //mat4 scale = mat4(0.33,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,1.0);
 
             myNormal = normal;
@@ -107,7 +107,7 @@
 		    //newPosition.z = newPosition.z + (displaceZ * 0.01);
 			newPosition.z = newPosition.z + (myDisplaceZ * 0.04);//❗️❕freq不够高！！！
 
-		    
+
 		    // we need to make the new positions into a vec4 so we can apply the rotation matrix
 		    vec4 rotatedPos4 = rotateX * vec4(newPosition,1.0);
 		    // we're now ready to generate the new normals after the rotation,  is crucial otherwise it will look like our light is also rotating
@@ -117,7 +117,7 @@
 			vec4 translatedPos = rotatedPos4 + translation;
 			myNormal = normalize(translatedPos.xyz * 1.2) ;
 
-            
+
 			gl_Position = projectionMatrix * modelViewMatrix * vec4(translatedPos.xyz,0.5);
 		}
 
@@ -168,16 +168,16 @@
 			vec3 light2 = vec3(1.0* sin(time),-0.2* sin(time)+0.1,- 0.2);
             // 👇original code for light
 			//vec3 light = vec3(0.,10.,5.);
-			
+
 			// Get the normal of the light
-			// Remember the Unit Vector of the light is the direction of the light 
+			// Remember the Unit Vector of the light is the direction of the light
 			vec3 invert = vec3(1.,1.,1.);
 			invert=myNormal * invert;
-			
+
 			light = normalize(light) * 0.9;
 			light2 = normalize(light2) * 0.6;
-			
-			// return the maximum of either 0, or the squared distance 
+
+			// return the maximum of either 0, or the squared distance
 		    float prod = max(0., 0.9* dot(myNormal,light));
 			float prod2 = max(0., 0.9* dot(myNormal,light2));
 			prod = prod+prod2;
@@ -187,7 +187,7 @@
             // To calculate the shading for the sphere
 			gl_FragColor = vec4(vec3(finalColor), 1.0) + vec4(vec3(0.15),1.);
 			//gl_FragColor = vec4(prod, prod, prod, 1.0) + vec4(vec3(0.15),1.);
-			
+
 		}
 		//============================================================
 		//END OF GLSL CODE
@@ -217,7 +217,7 @@
 			mesh = new THREE.Mesh(geometry, material);
 			scene.add(mesh);
 			renderer = new THREE.WebGLRenderer();
-			//Hack here to change resolution 
+			//Hack here to change resolution
 			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
             //renderer.context.enable(renderer.context.DEPTH_TEST);
 			container.appendChild(renderer.domElement);
