@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<head>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+<script>
+	//===my notes
+	//
+
+</script>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		uniform highp float time;
+
+		void main() {
+	        gl_Position = vec4(position,1.0) ;                
+		}
+
+</script>
+	<script id="fragmentShader" type="x-shader/x-fragment">
+		//============================================================
+		//PUT YOUR GLSL CODE HERE
+		//============================================================
+
+        precision highp float;
+
+        uniform vec2 resolution;
+        uniform vec2 mouse;
+        uniform highp float time;
+
+
+		/*more intersectors: https://iquilezles.org/www/articles/intersectors/intersectors.htm */
+		//The function returns the distance to the closest intersection
+		float iSphere(in vec3 ro, in vec3 rd, in vec4 sph){
+			//a sphere centered at the origin has equation |xyz| = r
+			// meaning, |xyz|^2 = r^2, meaning <xyz, xyz> = r^2 //❓ why what's "<>"
+			//now xyz = ro + t*rd (t 是 ray origin 到物体的距离，也是ray direction要乘以的长度)
+			//therefore |ro|^2 + t^2*rd^2 + 2<ro,rd>t -r^2 = 0 , 这是quadratig cquation ((a+b)^2 = a^2 + b^2 + 2ab)
+			//therefore t就可以算出来了
+			vec3 oc = ro - sph.xyz;//float r = 1.0;
+			float b = 2.0 * dot(oc,rd);//dot(ro,rd);
+			float c = dot(oc, oc) - sph.w * sph.w;//dot(ro, ro) - r*r;
+			float h = b*b -4.0*c;
+
+			if(h < 0.0) return -1.0;
+			float t = (-b - sqrt(h))/2.0;
+			return t;
+		}
+		//The function computes the normals of the sphere. pos means the ro + t*rd. which is the eye/camera.
+		vec3 nSphere(in vec3 pos, in vec4 sph){
+			return (pos-sph.xyz)/sph.w;
+		}
+		//compute the soft shadow
+		//article: https://iquilezles.org/www/articles/sphereshadow/sphereshadow.htm
+		float sphSoftShadow( in vec3 ro, in vec3 rd, in vec4 sph, in float k )
+		{
+			vec3 oc = ro - sph.xyz;
+			float b = dot( oc, rd );
+			float c = dot( oc, oc ) - sph.w*sph.w;
+			float h = b*b - c;
+
+			#if 0
+			// physically plausible shadow
+			float d = sqrt( max(0.0,sph.w*sph.w-h)) - sph.w;
+			float t = -b - sqrt( max(h,0.0) );
+			return (t<0.0) ? 1.0 : smoothstep(0.0, 1.0, 2.5*k*d/t );
+			#else
+			// cheap but not plausible alternative
+			return (b>0.0) ? step(-0.0001,c) : smoothstep( 0.0, 1.0, h*k/b );
+			#endif
+		}
+
+		float sphOcclusion( in vec3 pos, in vec3 nor, in vec4 sph )
+		{
+			vec3  r = sph.xyz - pos;
+			float l = length(r);
+			return dot(nor,r)*(sph.w*sph.w)/(l*l*l);
+		}
+		//============================================================
+		//The function returns the distance to the closest intersection
+		float iPlane(in vec3 ro, in vec3 rd){
+			//equation of a plane, y = 0 = ro.y + t*rd.y //❓ why
+			return -ro.y / rd.y;
+		}
+		//the function computes the normal of the plane.
+		vec3 nPlane(in vec3 pos){
+			return vec3(0.0,1.0,0.0);//plane的normal就是垂直水平面
+		}
+
+		//============================================================
+		vec4 sph1 = vec4(0.0,1.0,0.0,1.0);
+		//============================================================
+		float intersect(in vec3 ro, in vec3 rd, out float resT){
+			resT = 1000.0;
+			float id = -1.0;//float t = -1.0;
+			float t_sphere = iSphere(ro,rd, sph1);//iSphere(ro,rd);//intersect with a sphere
+			float t_plane = iPlane(ro,rd);//intersect with a plane
+			if(t_sphere > 0.0){
+				id = 1.0;
+				resT = t_sphere; //t = t_sphere;
+			}
+			if(t_plane > 0.0 && t_plane < resT){
+				id = 2.0;
+				resT = t_plane;//t = t_plane;
+			}
+			return id;//return t;
+		}
+		//============================================================
+        void main(){
+			vec3 light = normalize(vec3(0.5,0.5,0.5));
+            //uv are the pixel coordinates, from 0 to 1.
+        	vec2 uv = gl_FragCoord.xy/resolution.xy;
+
+			//move the sphere
+			sph1.x = 0.5 * cos(time);
+			sph1.z = 0.5 * sin(time);
+			//generate a ray with origin (ro) and direction (rd)//like人眼或相机
+			vec3 ro = vec3(0.0, 0.8, 3.0);
+			vec2 adjust = vec2(1.1, 1.0);
+			vec3 rd = normalize(vec3((-1.0 + 2.0 * uv) * adjust, -1.0));
+
+			//intersect the ray with the 3d scene. we need a function called intersect
+			float t;
+			float id = intersect(ro, rd, t);//float id = intersect(ro, rd);
+
+			//we draw different colors to different objects. //we draw black by default
+			//we need to do some lightening, and for that we need /*normals*/.
+			vec3 col = vec3(0.55,0.65,0.75);//vec3(0.5);
+//			if(id > 0.0){
+//				//if hit something draw white
+//				col = vec3(1.0);
+//			}
+			if(id > 0.5 && id < 1.5){//why specfically 0.5 and 1.5?
+				//if we hit the sphere
+				vec3 pos = ro + t*rd;
+				vec3 nor = nSphere(pos,sph1);//need normal for lighting
+				float dif = clamp(dot(nor,light), 0.0, 1.0);//dot(nor, light);
+				float ao = 0.5+0.5*nor.y;//occi
+				col = vec3(0.9,0.8,0.6) * dif * ao + vec3(0.1,0.2,0.4) * ao;//vec3(0.9,0.8,0.6) * dif + vec3(0.1,0.2,0.4);//ao*vec3(0.5,0.6,0.7);
+				//可以先把dif*0.0,来调整amb*vec3的参数;
+				//前面的是光照上去的，后面加的是阴影颜色，所以球看上去是阴影是蓝色的，高光处是白的。但也有渐变。
+			}else if(id>1.5){
+				//we hit the plane
+				vec3 pos = ro + t*rd;
+				vec3 nor = nPlane(pos);//need normal for lighting
+				float dif = clamp(dot(nor,light), 0.0, 1.0);
+				//shadow
+				float amb = smoothstep(0.2, 2.0 * sph1.w,length(pos.xz - sph1.xz));//0.2;
+				col = amb* vec3(0.5,0.6,0.7);//vec3(0.1,0.1,0.1) * dif+ amb* vec3(0.5,0.6,0.7);
+			}
+			col = sqrt(col);
+
+
+        	gl_FragColor = vec4(col,1.0);
+        }
+		//============================================================
+		//END OF GLSL CODE
+		//============================================================
+
+</script>
+	<script>
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 2;
+		var stats;
+		var camera, scene, renderer;
+		var uniforms;
+		init();
+		animate();
+		function init() {
+
+			camera = new THREE.Camera();
+			camera.position.z = 1;
+			scene = new THREE.Scene();
+			var geometry = new THREE.PlaneBufferGeometry(2,2);
+			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+			var mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution 
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+			document.body.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+			render();
+		}
+		function onMouseMove( event ) {
+        	uniforms.mouse.value.x = ( event.clientX / window.innerWidth );
+ 	        uniforms.mouse.value.y = ( 1-(event.clientY) / window.innerHeight
+ 	        );
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>
