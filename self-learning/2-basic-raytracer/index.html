@@ -130,6 +130,7 @@
 			//intersect the ray with the 3d scene. we need a function called intersect
 			float t;
 			float id = intersect(ro, rd, t);//float id = intersect(ro, rd);
+			float ao = 1.0;//occ is the ao.
 
 			//we draw different colors to different objects. //we draw black by default
 			//we need to do some lightening, and for that we need /*normals*/.
@@ -143,19 +144,28 @@
 				vec3 pos = ro + t*rd;
 				vec3 nor = nSphere(pos,sph1);//need normal for lighting
 				float dif = clamp(dot(nor,light), 0.0, 1.0);//dot(nor, light);
-				float ao = 0.5+0.5*nor.y;//occi
+				float tmin = 1e10;
+				ao = 0.5+0.5*nor.y;//occ
 				col = vec3(0.9,0.8,0.6) * dif * ao + vec3(0.1,0.2,0.4) * ao;//vec3(0.9,0.8,0.6) * dif + vec3(0.1,0.2,0.4);//ao*vec3(0.5,0.6,0.7);
 				//可以先把dif*0.0,来调整amb*vec3的参数;
-				//前面的是光照上去的，后面加的是阴影颜色，所以球看上去是阴影是蓝色的，高光处是白的。但也有渐变。
+				//前面的是光照上去的，后面加的是阴影颜色，所以球看上去是阴影是蓝色的，高光处是白的。也有渐变。
+
 			}else if(id>1.5){
 				//we hit the plane
 				vec3 pos = ro + t*rd;
 				vec3 nor = nPlane(pos);//need normal for lighting
+				ao = 1.0-sphOcclusion(pos, nor, sph1);
 				float dif = clamp(dot(nor,light), 0.0, 1.0);
 				//shadow
-				float amb = smoothstep(0.2, 2.0 * sph1.w,length(pos.xz - sph1.xz));//0.2;
-				col = amb* vec3(0.5,0.6,0.7);//vec3(0.1,0.1,0.1) * dif+ amb* vec3(0.5,0.6,0.7);
+				float amb = smoothstep(0.1, 1.0 * sph1.w,length(pos.xz - sph1.xz));//0.2;
+				float softShadow =  sphSoftShadow(pos, light, sph1, 1.0);//float sphSoftShadow( in vec3 ro, in vec3 rd, in vec4 sph, in float k )
+				col =vec3(0.5,0.6,0.7) * dif * softShadow;//col = amb* vec3(0.5,0.6,0.7);//vec3(0.1,0.1,0.1) * dif+ amb* vec3(0.5,0.6,0.7);//前面的vec3是plane自己的颜色。
+
+				col +=  0.05*ao;//有个球对于平面的另一个阴影影响。//0.05 * ao * vec3(0.5,0.6,0.7);//occ is ao above.//让影子有颜色。
+				//col *= exp( -0.05*tmin );//tmin= 1e10;
 			}
+
+			//col +=  0.05* ao * vec3(0.5,0.6,0.7);
 			col = sqrt(col);
 
 

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  	<style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+     <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body, #container {
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		void main() { gl_Position = vec4( position, 1.0 ); }
+
+</script>
+	<script id="fragmentShader"
+			type="x-shader/x-fragment">    //============================================================
+	//PUT YOUR GLSL CODE HERE
+	//============================================================
+
+	#define M_PI 3.14159265358979323846
+
+	uniform float time;
+	uniform vec2 mouse;
+	uniform vec2 resolution;
+
+	//==========================================================================================
+	//noise
+
+	float N21(vec2 p) { //two inputs, one outputs.
+		return fract(sin(p.x*100.+p.y*6574.)*5647.);
+	}
+
+	float SmoothNoise(vec2 uv) {
+		vec2 lv = fract(uv);
+		vec2 id = floor(uv);
+
+		lv = lv*lv*(3.-2.*lv);
+
+		float bl = N21(id);
+		float br = N21(id+vec2(1, 0));
+		float b = mix(bl, br, lv.x);
+
+		float tl = N21(id+vec2(0, 1));
+		float tr = N21(id+vec2(1, 1));
+		float t = mix(tl, tr, lv.x);
+
+		return mix(b, t, lv.y);
+	}
+
+	float SmoothNoise2(vec2 uv) {
+		float c = SmoothNoise(uv*4.);
+
+		// don't make octaves exactly twice as small
+		// this way the pattern will look more random and repeat less
+		c += SmoothNoise(uv*8.2)*.5;
+		c += SmoothNoise(uv*16.7)*.25;
+		c += SmoothNoise(uv*32.4)*.125;
+		c += SmoothNoise(uv*64.5)*.0625;
+
+		c /= 2.;
+
+		return c;
+	}
+	float hash1(float n)
+	{
+		return fract(n*17.0*fract(n*0.3183099));
+	}
+
+	//noise function here: https://www.iquilezles.org/www/articles/gradientnoise/gradientnoise.htm
+	float noise(in vec3 x)
+	{
+		vec3 p = floor(x);
+		vec3 w = fract(x);
+
+		vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+
+		float n = p.x + 317.0*p.y + 157.0*p.z;
+
+		float a = hash1(n+0.0);
+		float b = hash1(n+1.0);
+		float c = hash1(n+317.0);
+		float d = hash1(n+318.0);
+		float e = hash1(n+157.0);
+		float f = hash1(n+158.0);
+		float g = hash1(n+474.0);
+		float h = hash1(n+475.0);
+
+		float k0 =   a;
+		float k1 =   b - a;
+		float k2 =   c - a;
+		float k3 =   e - a;
+		float k4 =   a - b - c + d;
+		float k5 =   a - c - e + g;
+		float k6 =   a - b - e + f;
+		float k7 = - a + b + c - d + e - f - g + h;
+
+		return -1.0+2.0*(k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z);
+	}
+	//fbms
+	const mat2 m2 = mat2(0.8, -0.6, 0.6, 0.8);
+	float fbm4(in vec3 p)
+	{
+		float n = 0.0;
+		n += 1.000*noise(p*1.0);
+		n += 0.500*noise(p*2.0);
+		n += 0.250*noise(p*4.0);
+		n += 0.125*noise(p*8.0);
+		return n;
+	}
+
+	float fbm6(in vec3 p)
+	{
+		float n = 0.0;
+		n += 1.00000*noise(p*1.0);
+		n += 0.50000*noise(p*2.0);
+		n += 0.25000*noise(p*4.0);
+		n += 0.12500*noise(p*8.0);
+		n += 0.06250*noise(p*16.0);
+		n += 0.03125*noise(p*32.0);
+		return n;
+	}
+	//==========================================================================================
+	//SDF geometries
+	float sdRoundCone(vec3 p, float r1, float r2, float h)
+	{
+		vec2 q = vec2(length(p.xz), p.y);
+
+		float b = (r1-r2)/h;
+		float a = sqrt(1.0-b*b);
+		float k = dot(q, vec2(-b, a));
+
+		if (k < 0.0) return length(q) - r1;
+		if (k > a*h) return length(q-vec2(0.0, h)) - r2;
+
+		return dot(q, vec2(a, b)) - r1;
+	}
+	float sdCappedCylinder(vec3 p, float h, float r)
+	{
+		vec2 d = abs(vec2(length(p.xz), p.y)) - vec2(h, r);
+		return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
+	}
+	float sdCone(in vec3 p, in vec2 c, float h)
+	{
+		// c is the sin/cos of the angle, h is height
+		// Alternatively pass q instead of (c,h),
+		// which is the point at the base in 2D
+		vec2 q = h*vec2(c.x/c.y, -1.0);
+
+		vec2 w = vec2(length(p.xz), p.y);
+		vec2 a = w - q*clamp(dot(w, q)/dot(q, q), 0.0, 1.0);
+		vec2 b = w - q*vec2(clamp(w.x/q.x, 0.0, 1.0), 1.0);
+		float k = sign(q.y);
+		float d = min(dot(a, a), dot(b, b));
+		float s = max(k*(w.x*q.y-w.y*q.x), k*(w.y-q.y));
+		return sqrt(d)*sign(s);
+	}
+
+	//wired matrix of sphere objects
+	float sdSpheres(in vec3 pos)
+	{
+		vec3 q = pos;
+		float rad = 0.1 + 0.25 * sin(q.x * 25.0)* sin(q.y * 25.0)* sin(q.z * 25.0);
+		float d1 = length(q) - rad;
+		d1*=0.25;//small trick to remove the artifect.
+		return d1;
+
+	}
+
+	float sdEllipsoid(in vec3 pos, vec3 rad)
+	{
+		//trick to create the strentching and squeezing effect.
+		//do the derivative.
+		float k0 = length(pos/rad);
+		float k1 = length(pos/rad/rad);
+		return k0*(k0-1.0)/k1;//d * rad;
+
+	}
+	float sdSphere(in vec3 pos, in float rad)
+	{
+		return length(pos)-rad;
+
+	}
+
+	//==========================================================================================
+	//https://www.iquilezles.org/www/articles/smin/smin.htm
+	float smin(in float a, in float b, float k)//smooth min() to blend 形状们
+	{
+		float h = max(k - abs(a-b), 0.0);
+		float sminh = min(a, b) - h*h/(k * 4.0);
+		return sminh;//min(a,b);
+
+	}
+	//==========================================================================================
+	//main objects
+	vec2 sdSnowman(in vec3 pos, float atime)
+	{
+		float t1 = fract(atime);
+		float t2 = atime;
+		float t = fract(time);//0.5;//fract(iTime);//stop the time to do the modeling more conveniently.
+
+		float x = -1.0 + 2.0*abs(fract(atime*0.5)-0.5)/0.5;
+		float y = 3.0 * t1 * (1.0-t1);
+		float dy = 3.0 * 1.0 * (1.0-2.0*t1);//do the derivative. 这样球伸缩是跟随movement的
+
+		vec2 u = normalize(vec2(1.0, -dy));
+		vec2 v = vec2(dy, 1.0);
+
+		//change the centre of the snowman, to make it move
+		float itime = floor(atime);
+		float ftime = fract(atime);
+
+		vec3 cen = vec3(x * 0.5,
+		pow(y, 2.0-y) + 0.1,
+		itime + pow(ftime, 0.7));//jumping forward.use floor and fract to create a bounce jump
+		//vec3 cen = vec3(sin(t2 * 0.8), y + 0.1,cos(t2 * 0.8));//jumping as a circle
+
+		//create the  squashed and strentching effects.
+		float sy = 0.5 + 0.5*y;
+		float sz = 1.0/sy;
+		vec3 rad = vec3(0.18*sz,0.3 * sy, 0.2*sz);
+
+		vec3 q = pos - cen;
+		//q.xz = vec2(dot(u, q.yz), dot(v,q.yz));//to make the stretch. comment for now.
+
+		//body
+		float d = sdEllipsoid(q, rad);
+
+		//head
+		vec3 h = q - vec3(0.0,0.28,0.0); //move a bit higher, and make a head.
+		float d2 = sdEllipsoid(h, vec3(0.2));
+		d = smin(d, d2, 0.02);
+		vec2 res = vec2(d,2.0);//id=2.0 for head.
+
+		//eyes
+		vec3 sh = vec3(abs(h.x),h.yz);//get the symmetry positions.
+		float d3 = sdSphere(sh-vec3(0.08,0.04,0.15), 0.04);//one eye on the left
+		//d = min(d,d3);//don't need this. cuz doing the if-statement below. by distance.
+		if(d3 < d) res = vec2(d3, 3.0);//id=3.0 for eyes
+
+		//nose
+		//sdCone( in vec3 p, in vec2 c, float h )
+		float ang =  M_PI/2.;
+		mat2 rotation = mat2( cos(ang), sin(ang),
+		-sin(ang), cos(ang));
+		vec3 coneP = (h+vec3(0.0,0.0,-0.3));
+		coneP = vec3(coneP.x,coneP.yz * rotation);
+		float d4 = sdCone( coneP, vec2(sin(M_PI / 16.), cos(M_PI / 16.)),0.2);
+		if(d4 < d) res = vec2(d4, 4.0);//id=4.0 for nose
+
+		return res;//d;//sdEllipsoid(q, rad);//return length(pos-cen) - 0.25;
+	}
+	//==========================================================================================
+
+	vec2 map(in vec3 pos, float atime)
+	{
+		//============the jumping snowman============
+		vec2 d1 = sdSnowman(pos, atime);
+
+		vec2 res = d1;
+
+		//============trees============
+		vec3 treepos = pos - vec3(0.0, 1.5, 0.0);//i can add some noise here.
+		float treeH = SmoothNoise2(pos.xz) ;//fbm4(treepos-vec3(0.5,0.0,0.0));
+
+		treepos = vec3(mod(abs(treepos.x),6.0)-1.5, treepos.y, mod(treepos.z + 1.5, 3.0)-1.5);
+
+		//make the trees
+		float dtree = sdRoundCone(treepos-vec3(0.5,0.0,0.0), 1.0+0.05*treeH ,0.5+0.05*treeH, 2. );//sdRoundCone( vec3 p, float r1, float r2, float h )
+		dtree *= 0.5;
+		if(dtree < res.x) res = vec2(dtree, 1.1);//id 1.1 for trees
+		//tree-stump
+		float thickness = fbm6(pos);
+		float dstump = sdCappedCylinder( treepos-vec3(0.5,0.0,0.0), 0.1+0.04*thickness, 2.5 );
+		dstump *= 0.5;
+		if(dstump < res.x) res = vec2(dstump, 1.2);//id 1.2 for tree stumps
+
+		//============plane, floor,============
+		//float d2 = pos.y +0.25;
+		float floorH = -0.2 + 0.05*(sin(pos.x*2.0)+sin(pos.z*2.0));
+		float floorNoise = SmoothNoise2(pos.xz) ;
+		float d2 = pos.y - floorH + floorNoise*0.08;
+		//d2 = smin(d2, dstump, 0.2);//blend the roots and the stump
+
+		//snow balls in the sky coming down
+		float floorH2 = -0.2 + 0.05*(sin(pos.x*2.0)+sin(pos.z*2.0));
+		vec3 qos = vec3(mod(pos.x,2.0)-1., pos.y, mod(pos.z + 1., 2.0)-1.);
+		//try to make some variables without noise func.
+		vec2 id = vec2(floor(pos.x/2.0),floor(pos.z + 1./2.0));
+		float fid = id.x * 11.1 + id.y * 33.8;//give whatever numbers.
+		float fy = fract(fid*1.312+(-atime)*0.1);
+		float yy = -1.0+8.0*fy;
+		vec3 rad = vec3(0.7, 1.0+0.5*sin(fid*1.4231), 0.7);
+		rad -= 0.05 * (sin(pos.x*3.0)+sin(pos.y*4.0)+sin(pos.z*5.0));
+		float siz = 1.0*fy*(1.0-fy);
+		float snowBalls = sdEllipsoid(qos-vec3(0.0,yy,0.0),siz*rad );//siz*rad+floorNoise*0.08;
+		snowBalls *= 0.6;
+		d2 = smin(d2,snowBalls,0.3);
+		if(d2 < res.x)
+		{   res = vec2(d2, 1.0);//gound
+		}
+
+		return res;
+	}
+	vec3 calcNormal (in vec3 pos, float atime)
+	{
+		vec2 e = vec2(0.0001, 0.0);
+		return normalize(vec3(  map(pos + e.xyy, atime).x-map(pos-e.xyy, atime).x,
+		map(pos + e.yxy, atime).x-map(pos-e.yxy, atime).x,
+		map(pos + e.yyx, atime).x-map(pos-e.yyx, atime).x));
+	}
+
+	vec2 castRay(in vec3 ro, vec3 rd, float atime)
+	{
+		float m = -1.01;//material
+		float t = 0.0;
+		for(int i = 0; i < 100; i ++)
+		{
+			vec3 pos = ro + t * rd;
+			vec2 h = map(pos, atime);
+			m = h.y;
+			if(abs(h.x) < (0.001*t)) break;//inside the ball.
+			t += h.x;
+			if(t>20.0) break;//the max
+		}
+
+		if (t > 20.0) m = -1.0;
+		return vec2(t,m);
+
+	}
+
+	//use sdf do the soft shadow.
+	float castShadow(in vec3 ro, vec3 rd, float atime)
+	{
+		float res = 1.0;
+		float t = 0.0001;
+		for (int i = 0; i<100; i ++)
+		{
+			vec3 pos = ro + t * rd;
+			float h = map(pos, atime).x;
+			res = min(res, 16.0 * h/t);//res is how close we are getting the object
+			if(res < 0.0001)break;
+			t += h;
+			if(t>20.0)break;
+		}
+		return res;
+	}
+
+	float calcOcclusion(in vec3 pos, in vec3 nor, float atime)
+	{
+		float occ = 0.0;
+		float sca = 1.0;
+		for (int i = 0; i < 5; i ++)//measure 5 different positions around the point we are shading.
+		{
+			float h = 0.01 + 0.11 * float(i)/4.0;
+			vec3 opos = pos + h*nor;
+			float d = map(opos,atime).x;
+			occ += (h-d)*sca;
+			sca *= 0.95;
+		}
+		return clamp(1.0-2.0*occ, 0.0, 1.0);
+	}
+	//==========================================================================================
+	vec3 render(in vec3 ro, in vec3 rd, float atime)
+	{
+		//sky
+		vec3 col =vec3(0.4,0.75,1.0) - 0.7 * rd.y;//sky color.some gradient. super blue now.
+		//clouds
+		vec2 uv = rd.xz / rd.y;
+		float clou = 1.0*(sin(1.0*uv.x)+sin(1.0*uv.y))+
+		0.5*(sin(2.0*uv.x)+sin(2.0*uv.y));
+
+		col = mix(col, vec3(0.9, 0.75, 0.6), smoothstep(-0.1,0.1,-0.5+clou));
+
+		//mix the sky with something grey. especially near the horizen (rd.y)
+		col = mix(col, vec3(0.7, 0.75, 0.8), exp(-10.0 * rd.y));
+
+
+
+		//ray marching
+		vec2 res = castRay(ro, rd,atime);//t and m defined before.
+
+		if(res.y>-.5)//only check the m value. 1 for ground, 2 for body, 2 for eyes. -1 for anything else.
+		{
+			float t = res.x;
+			vec3 pos = ro + t * rd;
+			vec3 nor = calcNormal(pos,atime);
+
+			vec3 mate = vec3(0.2);//base color for the object (material), normally 0.2, 0.3
+			float ks = 1.0;
+
+			//check different res.y to texture different parts.
+			if (res.y > 3.5)//nose
+			{
+				vec3 redC = vec3(235., 108., 47.)/255.;
+				mate = redC;
+			}else if (res.y > 2.5)//eyes
+			{
+				vec3 blackC = vec3(8./255., 8./255., 28./255.);
+				mate = blackC;
+			}else if (res.y > 1.5)//body
+			{
+				vec3 whiteC2 = vec3(216./255., 224./255., 232./255.);
+				mate = whiteC2;
+			}else if( res.y > 1.15)
+			{
+				vec3 brownC = vec3(41., 26., 8.)/255.;
+				mate = brownC;
+
+			}else//terrain, floor
+			{
+				vec3 whiteC = vec3(217., 237., 249.)/255.;
+				vec3 greenC = vec3(0.05, 0.1, 0.02);
+				mate = whiteC;
+				//checker's green ground. maybe terrain later.
+				float f = -1.0 + 3.0 * smoothstep(-0.2, 0.2, sin(10.0 * pos.x)*sin(10.0*pos.y)*sin(10.0*pos.z));
+				mate += 0.5 * f * vec3(0.06,0.06,0.02);
+			}
+
+			float occ = calcOcclusion(pos, nor,atime);
+			vec3 sun_dir = normalize(vec3(0.8, 0.4, 0.2));
+			float sun_dif = clamp(dot(nor, sun_dir), 0.0, 1.0);
+			vec3 sun_bak = normalize(vec3(-sun_dir.x,0.0,-sun_dir.z));
+			float sun_sha = castShadow(pos + nor* 0.001, sun_dir,atime);//step(castRay(pos + nor* 0.001, sun_dir).y, 0.0);//why y here????
+			vec3  sun_hal = normalize( sun_dir-rd );
+			float sky_dif = sqrt(clamp(0.5+0.5*dot(nor, vec3(0.0,1.0,0.0)), 0.0, 1.0));//本来是dot(nor, vec3(0.0,1.0,0.0))，单纯从上往下，0.5+0，5*后，就可以看到球的另一边。
+			float sky_ref = smoothstep(0.0, 0.5, reflect(rd, nor).y);
+			float bou_dif = sqrt(clamp(0.5+0.5*dot(nor, vec3(0.0,-1.0,0.0)), 0.0, 1.0));
+			float sun_spe = ks*pow(clamp(dot(nor,sun_hal),0.0,1.0),8.0)*sun_dif*(0.04+0.96*pow(clamp(1.0+dot(sun_hal,rd),0.0,1.0),5.0));
+			float fre = clamp(1.0+dot(rd, nor),0.0,1.0);//dark in the centre, white in the outside.
+			float bak = clamp( 0.4+0.6*dot( nor, sun_bak ), 0.0, 1.0 );
+			bak *= 0.6 + 0.4*smoothstep( -8.0,-1.0,pos.y);
+
+
+			col = mate;
+			vec3 lin = vec3(0.0);
+			lin += 4.0 * vec3(0.90,0.55,0.35)*sun_dif*sun_sha;//yellow sun light, normally intensity of 10/vec3(1.0, 0.7, 0.5)
+			lin += 0.4 * 1.2*vec3(0.5,0.8, 0.9)*sky_dif*occ;//blue sky light, normally 0.1 of the intensity of sin_dif
+			lin += 0.6 * vec3(1.0, 0.4, 0.005)*bou_dif*occ;//bounce light. light from below.//vec3(0.7,0.3, 0.2)
+			col += bak*0.7*vec3(0.30,0.11,0.42)*occ;//add some purple from the back
+			lin += fre * vec3(1.0, 0.7, 0.6)*1.0*(0.5 + 0.5 * sun_dif)*occ;//glowing effect.
+			col = col*lin;
+
+			col += sun_spe*vec3(8.10,6.00,4.20)*sun_sha;
+			col += sky_ref * 0.07 * vec3(0.56,0.9, 0.99)*sky_dif*occ;
+			//col = vec3(fre);
+			//col = vec3(occ*occ);
+
+			//fog
+			col = mix( col, vec3(0.5,0.7,0.9), 1.0-exp( -0.0001*t*t*t ) );
+
+			//some post effects.
+			//col = clamp( 1.2*col-0.1, 0.0, 1.0 );
+			//col = col*0.1 + 0.9*col*col*(2.0-1.0*col);
+			col = pow( col, vec3(0.76,0.98,1.0) );
+		}
+		return col;
+	}
+
+	void main(void) {
+		vec2 uv = gl_FragCoord.xy/resolution.xy;
+		vec2 p = (2.0 * gl_FragCoord.xy-resolution.xy)/resolution.y;
+		float myTime = time * 0.7;
+
+		//camera setting.
+		//use mouse to rotate.
+		float an = 10.0 * mouse.x / resolution.x;//0.1 * time;
+		//vec3 ta = vec3(0.0,0.95,0.0);
+
+		//make the camera follow the snowman.
+		float cd = 0.0;//0.9 * sin(time);//camera distance
+		vec3 ta = vec3(0.0, 0.75, 0.1 + cd + myTime);
+		vec3 ro = ta + vec3(1.8*sin(an),0.0, 1.8*cos(an));//ray origin
+
+		vec3 ww = normalize(ta-ro);
+		vec3 uu = normalize(cross(ww,vec3(0,1,0)));
+		vec3 vv = normalize(cross(uu,ww));
+		vec3 rd = normalize(p.x*uu + p.y *vv + 1.5*ww);// vec3 rd = normalize(vec3(p, -1.5));// the ray direction
+		//end of camera setting
+
+		vec3 col = render( ro, rd, myTime );//render the world
+		//gamma correction
+		col = pow(col, vec3(0.4545));
+
+		gl_FragColor = vec4(col, 1.0);
+
+	}
+
+
+	</script>
+	<script>
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 3;
+		var container, stats;
+		var camera, scene, renderer;
+		var uniforms;
+		init();
+		animate();
+		function init() {
+			container = document.getElementById('container');
+			camera = new THREE.Camera();
+			camera.position.z = 1;
+			scene = new THREE.Scene();
+			var geometry = new THREE.PlaneBufferGeometry(2, 2);
+			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+			var mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution 
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+			container.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+			render();
+		}
+		function onMouseMove( event ) {
+        	uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
+ 	        uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight
+ 	        );
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>

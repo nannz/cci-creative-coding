@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  	<style>
+		body {
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+     <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js">
+</script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body, #container {
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		void main() { gl_Position = vec4( position, 1.0 ); }
+
+</script>
+	<script id="fragmentShader" type="x-shader/x-fragment">
+
+
+		uniform float time;
+		uniform vec2 mouse;
+		uniform vec2 resolution;
+
+		// return smoothstep and its derivative
+		vec2 smoothstepd( float a, float b, float x)
+		{
+			if( x<a ) return vec2( 0.0, 0.0 );
+			if( x>b ) return vec2( 1.0, 0.0 );
+			float ir = 1.0/(b-a);
+			x = (x-a)*ir;
+			return vec2( x*x*(3.0-2.0*x), 6.0*x*(1.0-x)*ir );
+		}
+		//==========================================================================================
+		//hashes
+		//learn more hash here: https://www.shadertoy.com/view/llGSzw
+		float hash1( vec2 p )
+		{
+			p  = 50.0*fract( p*0.3183099 );
+			return fract( p.x*p.y*(p.x+p.y) );
+		}
+		float hash1( float n )
+		{
+			return fract( n*17.0*fract( n*0.3183099 ) );
+		}
+
+		vec2 hash2( float n ) { return fract(sin(vec2(n,n+1.0))*vec2(43758.5453123,22578.1459123)); }
+
+
+		vec2 hash2( vec2 p )
+		{
+			const vec2 k = vec2( 0.3183099, 0.3678794 );
+			p = p*k + k.yx;
+			return fract( 16.0 * k*fract( p.x*p.y*(p.x+p.y)) );
+		}
+		/*
+		float hash( uint n )
+		{
+			n = (n << 13U) ^ n;
+			n = n * (n * n * 15731U + 789221U) + 1376312589U;
+			return uintBitsToFloat( (n>>9U) | 0x3f800000U ) - 1.0;
+		}
+		*/
+
+		//==========================================================================================
+		// noises
+		// value noise, and its analytical derivatives:https://iquilezles.org/www/articles/morenoise/morenoise.htm
+		vec4 noised( in vec3 x )
+		{
+			vec3 p = floor(x);
+			vec3 w = fract(x);
+
+			vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+			vec3 du = 30.0*w*w*(w*(w-2.0)+1.0);
+
+			float n = p.x + 317.0*p.y + 157.0*p.z;
+
+			float a = hash1(n+0.0);
+			float b = hash1(n+1.0);
+			float c = hash1(n+317.0);
+			float d = hash1(n+318.0);
+			float e = hash1(n+157.0);
+			float f = hash1(n+158.0);
+			float g = hash1(n+474.0);
+			float h = hash1(n+475.0);
+
+			float k0 =   a;
+			float k1 =   b - a;
+			float k2 =   c - a;
+			float k3 =   e - a;
+			float k4 =   a - b - c + d;
+			float k5 =   a - c - e + g;
+			float k6 =   a - b - e + f;
+			float k7 = - a + b + c - d + e - f - g + h;
+
+			return vec4( -1.0+2.0*(k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z),
+			2.0* du * vec3( k1 + k4*u.y + k6*u.z + k7*u.y*u.z,
+			k2 + k5*u.z + k4*u.x + k7*u.z*u.x,
+			k3 + k6*u.x + k5*u.y + k7*u.x*u.y ) );
+		}
+		vec3 noised( in vec2 x )
+		{
+			vec2 p = floor(x);
+			vec2 w = fract(x);
+
+			vec2 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+			vec2 du = 30.0*w*w*(w*(w-2.0)+1.0);
+
+			float a = hash1(p+vec2(0,0));
+			float b = hash1(p+vec2(1,0));
+			float c = hash1(p+vec2(0,1));
+			float d = hash1(p+vec2(1,1));
+
+			float k0 = a;
+			float k1 = b - a;
+			float k2 = c - a;
+			float k4 = a - b - c + d;
+
+			return vec3( -1.0+2.0*(k0 + k1*u.x + k2*u.y + k4*u.x*u.y),
+			2.0* du * vec2( k1 + k4*u.y,
+			k2 + k4*u.x ) );
+		}
+		float noise( in vec3 x )
+		{
+			vec3 p = floor(x);
+			vec3 w = fract(x);
+
+			vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+
+			float n = p.x + 317.0*p.y + 157.0*p.z;
+
+			float a = hash1(n+0.0);
+			float b = hash1(n+1.0);
+			float c = hash1(n+317.0);
+			float d = hash1(n+318.0);
+			float e = hash1(n+157.0);
+			float f = hash1(n+158.0);
+			float g = hash1(n+474.0);
+			float h = hash1(n+475.0);
+
+			float k0 =   a;
+			float k1 =   b - a;
+			float k2 =   c - a;
+			float k3 =   e - a;
+			float k4 =   a - b - c + d;
+			float k5 =   a - c - e + g;
+			float k6 =   a - b - e + f;
+			float k7 = - a + b + c - d + e - f - g + h;
+
+			return -1.0+2.0*(k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z);
+		}
+		float noise( in vec2 x )
+		{
+			vec2 p = floor(x);
+			vec2 w = fract(x);
+			vec2 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+
+			#if 0
+			p *= 0.3183099;
+			float kx0 = 50.0*fract( p.x );
+			float kx1 = 50.0*fract( p.x+0.3183099 );
+			float ky0 = 50.0*fract( p.y );
+			float ky1 = 50.0*fract( p.y+0.3183099 );
+
+			float a = fract( kx0*ky0*(kx0+ky0) );
+			float b = fract( kx1*ky0*(kx1+ky0) );
+			float c = fract( kx0*ky1*(kx0+ky1) );
+			float d = fract( kx1*ky1*(kx1+ky1) );
+			#else
+			float a = hash1(p+vec2(0,0));
+			float b = hash1(p+vec2(1,0));
+			float c = hash1(p+vec2(0,1));
+			float d = hash1(p+vec2(1,1));
+			#endif
+
+			return -1.0+2.0*( a + (b-a)*u.x + (c-a)*u.y + (a - b - c + d)*u.x*u.y );
+		}
+
+		//==========================================================================================
+		// noises
+		//fbms
+		const mat2 m2 = mat2(0.8,-0.6,0.6,0.8);
+		const mat3 m3  = mat3( 0.00,  0.80,  0.60,
+		-0.80,  0.36, -0.48,
+		-0.60, -0.48,  0.64 );
+		const mat3 m3i = mat3( 0.00, -0.80, -0.60,
+		0.80,  0.36, -0.48,
+		0.60, -0.48,  0.64 );
+		float fbm4( in vec3 p )
+		{
+			float n = 0.0;
+			n += 1.000*noise( p*1.0 );
+			n += 0.500*noise( p*2.0 );
+			n += 0.250*noise( p*4.0 );
+			n += 0.125*noise( p*8.0 );
+			return n;
+		}
+
+		float fbm6( in vec3 p )
+		{
+			float n = 0.0;
+			n += 1.00000*noise( p*1.0 );
+			n += 0.50000*noise( p*2.0 );
+			n += 0.25000*noise( p*4.0 );
+			n += 0.12500*noise( p*8.0 );
+			n += 0.06250*noise( p*16.0 );
+			n += 0.03125*noise( p*32.0 );
+			return n;
+		}
+
+		float fbm6( in vec2 p )
+		{
+			float n = 0.0;
+			n += 1.00000*noise( p*1.0 );
+			n += 0.50000*noise( p*2.0 );
+			n += 0.25000*noise( p*4.0 );
+			n += 0.12500*noise( p*8.0 );
+			n += 0.06250*noise( p*16.0 );
+			n += 0.03125*noise( p*32.0 );
+			return n;
+		}
+
+		float fbm4( in vec2 p )
+		{
+			float n = 0.0;
+			n += 1.00000*noise( p*1.0 );
+			n += 0.50000*noise( p*2.0 );
+			n += 0.25000*noise( p*4.0 );
+			n += 0.12500*noise( p*8.0 );
+			return n;
+		}
+
+		float fbm( in vec2 x )//fbm_4
+		{
+			float f = 1.9;
+			float s = 0.55;
+			float a = 0.0;
+			float b = 0.5;
+			for( int i=0; i<4; i++ )
+			{
+				float n = noise(x);
+				a += b*n;
+				b *= s;
+				x = f*m2*x;
+			}
+			return a;
+		}
+		vec4 fbmd_8( in vec3 x )
+		{
+			float f = 1.92;
+			float s = 0.5;
+			float a = 0.0;
+			float b = 0.5;
+			vec3  d = vec3(0.0);
+			mat3  m = mat3(1.0,0.0,0.0,
+			0.0,1.0,0.0,
+			0.0,0.0,1.0);
+			for( int i=0; i<7; i++ )
+			{
+				vec4 n = noised(x);
+				a += b*n.x;          // accumulate values
+				d += b*m*n.yzw;      // accumulate derivatives
+				b *= s;
+				x = f*m3*x;
+				m = f*m3i*m;
+			}
+			return vec4( a, d );
+		}
+		//==========================================================================================
+		//shapes
+		float ndot(vec2 a, vec2 b ) { return a.x*b.x - a.y*b.y; }
+
+		float sdRhombus( in vec2 p, in vec2 b, in float r )
+		{
+			vec2 q = abs(p);
+			float h = clamp( (-2.0*ndot(q,b) + ndot(b,b) )/dot(b,b), -1.0, 1.0 );
+			float d = length( q - 0.5*b*vec2(1.0-h,1.0+h) );
+			d *= sign( q.x*b.y + q.y*b.x - b.x*b.y );
+			return d - r;
+		}
+		float sdRoundedCylinder( vec3 p, float ra, float rb, float h )
+		{
+			vec2 d = vec2( length(p.xz)-2.0*ra+rb, abs(p.y) - h );
+			return min(max(d.x,d.y),0.0) + length(max(d,0.0)) - rb;
+		}
+
+		float sdHexPrism( vec3 p, vec2 h )//八边形，我要把宽度按照y从0-底变化
+		{
+			const vec3 k = vec3(-0.8660254, 0.5, 0.57735);
+			p = abs(p);
+			p.xy -= 2.0*min(dot(k.xy, p.xy), 0.0)*k.xy;
+
+			vec2 d = vec2(
+			length(p.xy-vec2(clamp(p.x,-k.z*h.x,k.z*h.x), h.x))*sign(p.y-h.x),
+			p.z-h.y );
+			return min(max(d.x,d.y),0.0) + length(max(d,0.0));
+		}
+		//钻石形状
+		float sdOctahedron( vec3 p, float s)
+		{
+			p = abs(p);
+			float m = p.x+p.y+p.z-s;
+			vec3 q;
+			if( 3.0*p.x < m ) q = p.xyz;
+			else if( 3.0*p.y < m ) q = p.yzx;
+			else if( 3.0*p.z < m ) q = p.zxy;
+			else return m*0.57735027;
+
+			float k = clamp(0.5*(q.z-q.y+s),0.0,s);
+			return length(vec3(q.x,q.y-s+k,q.z-k));
+		}
+
+		float usdBox( in vec3 p, in vec3 b )
+		{
+			return length( max(abs(p)-b,0.0 ) );
+		}
+
+		float sdBox( vec3 p, vec3 b )
+		{
+			vec3 d = abs(p) - b;
+			return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
+		}
+
+		float sdBox( float p, float b )
+		{
+			return abs(p) - b;
+		}
+
+		vec2 opRepLim( in vec2 p, in float s, in vec2 lim )
+		{
+			return p-s*clamp(floor(p/s + vec2(0.5)),-lim,lim);
+		}
+		vec2 opRepLim( in vec2 p, in float s, in vec2 limmin, in vec2 limmax )
+		{
+			return p-s*clamp(floor(p/s + vec2(0.5)),-limmin,limmax);
+		}
+
+		vec3 opRepLim3( in vec3 p, in float s, in vec3 lim )
+		{
+			return p-s*clamp(floor(p/s + vec3(0.5)),-lim,lim);//vec3 clamp(vec3 x, vec3 minVal, vec3 maxVal)
+		}
+
+		//==========================================================================================
+			#define SC (250.0)
+			#define M_PI 3.14159265358979323846
+		//==========================================================================================
+		//terrain & temple
+		//my terrain, using noised function
+		float terrainM( in vec2 x )
+		{
+			vec2  p = x*0.003/SC;
+			float a = 0.0;
+			float b = 1.0;
+			vec2  d = vec2(0.0);
+			for( int i=0; i<16; i++ )
+			{
+				vec3 n = noised(p);
+				d += n.yz;
+				a += b*n.x/(1.0+dot(d,d));
+				b *= 0.5;
+				p = m2*p*2.0;
+			}
+			return SC*120.0*a;
+		}
+
+		const float ocean = -250.0;//-25.0;
+
+		vec3 temple( in vec3 p )
+		{
+
+			vec3 op = p;
+			vec3 res = vec3(-1.0,-1.0,0.5);//vec3(-1.0,-1.0,0.5);
+
+			p.y += 0.0;
+
+			// bounding box
+			float bbox = usdBox(p,vec3(15.0,18.0,15.0)*1.5 );
+			if( bbox>5.0 ) return vec3(bbox+1.0,-1.0,0.5);
+
+			vec3 q = p;
+			////q.x = mod(q.x+2.0, 4.0)-2.0;//mod = x- y*floor(x/y) //正负2在这是确保区间不是0-4，而是-2到2，这样column就在重复的区间里了
+			//如果把q.x改成q.xz,那么就是矩阵型柱子了
+			////q.xz= mod(q.xz+2.0, 4.0)-2.0;
+			//但现在是infinite的矩阵，所以需要以下function来render限量的柱子
+			//opRepLim()保证instead of repeating infinitely, 我们只repeat in a given amount of times.
+			q.xz = opRepLim(p.xz,4.0,vec2(4.0,2.0));//4.0是repetition period。最后vec2是在两个纬度上重复的次数，4次在x，2次在y。
+
+
+			// columns
+			q.xz = opRepLim(p.xz,8.0,vec2(1.0,1.0)); //opRepLim()保证instead of repeating infinitely, 我们只repeat in a given amount of times.
+			//8.0是repetition period中间的间隔。最后vec2是在两个纬度上重复的次数，1次在x，1次在y。
+			vec2 id = floor((p.xz + 2.0)/4.0);
+			// columns柱子
+			float rad = 0.9;//base size
+			//rad -= 0.05*q.y;//shape. 让柱子从细到粗。thinner at the top. gradually thinner based on y-axis.
+
+			float d = length(q.xz) - rad;//remove y-axis, will have an infinite column.
+			d = max(d,p.y - 6.0);//clipping from the top.
+			d = max(d,-p.y - 5.0);//clipping from the bottom.
+
+			//add some noise points. 噪点，增加真实感。这样每块砖看起来着色不一样。让程序在计算时记住这里不同。
+			res.z = hash1(id + 23.0 * floor(100.25)+(q.y * 3.0 + 0.6)/6.281);
+
+			d *= 0.7;//small trick to remove strange lighting.
+
+			//create box,柱子上下的方块
+			float d_box;
+			{
+				vec3 qq = vec3(q.x, abs(q.y-0.3)-5.5, q.z);//adjust the position. //use abs()来一次做两个box，因为计算q.y正负值的时候是一样的。
+				d_box = sdBox(qq,vec3(1.4,0.2,1.4));//第二个virable vec3分别是长，高，宽
+				//combine column and the box.
+				d = min(d, d_box);//用min是因为我们根据distance来画图形，而现在我们就只展示离camera更近的图形。
+			}
+
+			//把中间掏空，我们只要最外围的柱子们 clean up the centre of the columns. we only want the outer ring of columns
+			d = max(d, -sdBox(p, vec3(12.0, 7.0, 4.0)));
+			d = max(d, -sdBox(p, vec3(4.0, 7.0, 12.0)));
+			//d = 1e20;//trick to quickly remove something, to see what's going on below.
+
+			//** rotate a bit, and another four columns
+			float angle = M_PI/4.;
+			mat2 rotation = mat2( cos(angle), sin(angle),
+			-sin(angle), cos(angle));
+			vec3 q2 = p;
+			q2.xz = opRepLim(p.xz*rotation,8.0,vec2(1.0,1.0));
+			float d2 = length(q2.xz) - rad;
+			d2 = max(d2,p.y - 6.0);//clipping from the top.
+			d2 = max(d2,-p.y - 5.0);//clipping from the bottom.
+			{//create box,柱子上下的方块
+				vec3 qq = vec3(q2.x, (abs(q2.y-0.3)-5.5), q2.z);//adjust the position. //use abs()来一次做两个box，因为计算q.y正负值的时候是一样的。
+				d_box = sdBox(qq,vec3(1.4,0.2,1.4));//第二个virable vec3分别是长，高，宽
+				d2 = min(d2, d_box);//用min是因为我们根据distance来画图形，而现在我们就只展示离camera更近的图形。
+			}
+			d2 *= 0.7;
+			d2 = max(d2, -sdBox(p, vec3(10.0, 7.0, 10.0)));
+			//combine columnes, make a circle.
+			d = min(d, d2);
+
+			// floor
+			//first floor
+			{
+				q = p;
+				q.y += 6.0;
+				q.xz = opRepLim(p.xz,4.0,vec2(3.5,3.5));//repeat the floor bricks
+
+				vec3 q2 = p;
+				q2.y += 6.0;
+				float brickRound = sdRoundedCylinder(q2,7.7,0.45,0.08); //float sdRoundedCylinder( vec3 p, float ra, float rb, float h )
+				float brickBox = sdBox(q, vec3(1.95, 0.45, 1.95)-0.2)-0.2;
+				brickBox = max(brickBox,brickRound);
+				//d = min(d, brickBox);
+				if(brickBox<d){d = brickBox; res.z = hash1(id);}//add some noise points
+			}
+			//second floor
+			{
+				q = p;
+				q.x += 2.0;
+				q.z -= 2.0;//create some offsets
+				q.y += 7.5;
+				vec3 q2 = q;
+				q2.xz *= rotation;
+				q.xz = opRepLim(q.xz,4.0,vec2(3.5,4.5), vec2(4.5,3.0));
+				q2.xz = opRepLim(q2.xz,4.0,vec2(3.5,4.5), vec2(4.5,3.0));
+				float brickBox1 = sdBox(q, vec3(1.95, 0.75, 1.95)-0.2)-0.2;
+				float brickBox2 = sdBox(q2, vec3(1.95, 0.75, 1.95)-0.2)-0.2;
+				brickBox1 = max(brickBox1,brickBox2);//做个八角形
+				//d = min(d, brickBox1);
+				if(brickBox1<d){d = brickBox1; res.z = hash1(id+14.5);}//add some noise points
+			}
+			//third floor
+			{
+				q = p;
+				q.y += 10.25;
+				q.xz = opRepLim(q.xz,4.0,vec2(3.5,3.5), vec2(3.5,3.5));
+				float b = sdBox(q, vec3(1.95, 1.5, 1.95)-0.2)-0.2;
+				d = min(d, sdBox(q, vec3(1.95, 1.5, 1.95)-0.2)-0.2);
+				if(b<d){d=b;res.z = hash1(id*10.0 + 31.1);}
+			}
+
+
+			//create roof
+			angle = M_PI/2.;
+			rotation = mat2( cos(angle), sin(angle),-sin(angle), cos(angle));
+			q2 = p;
+			q2.y -= 7.0;
+			float k = 0.1;// or some other amount
+			float c = cos(k * q2.x);
+			float s = sin(k * q2.x);
+			mat2 m = mat2(c, -s, s, c);
+			vec3 q2_bended = vec3(m * q2.xy, q2.z);
+			float b_roof =  sdOctahedron(q2_bended,20.);
+			b_roof = max(b_roof,-sdBox(q, vec3(10.0, 16.0, 10.0)) );//clip the Octahedron use a box
+
+			//try use sin to give texture details for roof
+			float a_horiPlane = atan(q2_bended.x,q2_bended.z);
+			float curve = 0.5 + 0.5 * sin(50.0 *a_horiPlane);//the sine curve, 0.5 is to make it from 0 to 1
+			float rad_r = 0.0;
+			rad_r -= 0.1* pow(curve, 2.0); //add power for more details. //rad -= 0.1* curve;
+			rad_r += 0.15 * pow(0.5 + 0.5 * sin(q2_bended.y * 3.0), 0.1) -  0.15;
+			b_roof = b_roof - rad_r;
+			b_roof *= 0.4;
+
+			d = min(d,b_roof);
+
+			d -= 0.02*smoothstep(0.5,1.0,fbm4( p.zxy ));
+			d -= 0.01*smoothstep(0.4,0.8,fbm4( op*3.0 ));
+			d += 0.005;
+
+			res = vec3( d, 1.0, res.z );
+
+			return res;
+		}
+		//==========================================================================================
+
+		vec3 map( in vec3 p )
+		{
+			vec3 res = temple(p);
+
+			{//my own noised terrain
+				//only the far far away has the terrain. still didn't know why there is no terrain right below the temple.
+				//I suppose it's the reason of the virables in the noise and terrain funcitons.
+				float h = terrainM( p.xz );
+				float m = p.y - h;
+				//m *= 0.35;//这里乘以0.35来slow down the ray marcher especitally in those terrain ares by a third.因为terrain的sdf不是correct的。
+				if( m<res.x ) res = vec3( m, 2.0, 0.0 );
+			}
+
+			{//海平面
+				float w = p.y + abs(ocean);
+				if( w<res.x ) res = vec3(w,3.0, 0.0 );
+			}
+
+			return res;
+		}
+		// http://iquilezles.org/www/articles/normalsSDF/normalsSDF.htm
+		vec3 calcNormal( in vec3 p, in float t )
+		{
+			float e = 0.001*t;
+			vec2  eps = vec2( 0.001*t, 0.0 );
+
+			vec2 h = vec2(1.0,-1.0)*0.5773;
+
+			return normalize( h.xyy*map( p + h.xyy*e ).x +
+			h.yyx*map( p + h.yyx*e ).x +
+			h.yxy*map( p + h.yxy*e ).x +
+			h.xxx*map( p + h.xxx*e ).x );
+
+
+		}
+		vec3 intersect( in vec3 ro, in vec3 rd )
+		{
+			vec2 ma = vec2(0.0);
+
+			vec3 res = vec3(-1.0);
+
+			float tmax = 5000.*SC;//10.0 * SC;//1000.0;
+
+			// bounding plane
+			float tmin = 0.01;
+			float maxh = 300.0*SC;
+			float tp = (maxh-ro.y)/rd.y;
+			if( tp>0.0 )//ro.y < maxh
+			{
+				if( ro.y>maxh ) tmin = max( tmin, tp );
+				else            tmax = min( tmax, tp );
+			}
+
+			float t = 10.0;
+			for( int i=0; i<256; i++ )
+			{
+				vec3 pos = ro + t*rd;
+				vec3 h = map( pos );
+				if( h.x<(0.0001*t) || t>tmax ) break;
+				t +=  h.x;
+
+				ma = h.yz;
+			}
+
+			if( t<tmax )
+			{
+				res = vec3(t, ma);
+			}
+
+			return res;
+		}
+		float calcShadow( in vec3 ro, in vec3 rd, float k )
+		{
+			float res = 1.0;
+
+			float t = 0.001;
+			for( int i=0; i<128; i++ )
+			{
+				vec3 pos = ro + t*rd;
+				float h = map( pos ).x;
+				res = min( res, k*max(h,0.0)/t );
+				if( res<0.0001||pos.y>(SC*200.0) ) break;
+				t += clamp(h,0.01,0.5);
+			}
+
+			return clamp( res, 0.0, 1.0 );//res;
+		}
+
+		float calcOcclusion(in vec3 pos, in vec3 nor, float ra)
+		{
+			float occ = 0.0;
+			for (int i=0; i<32; i++)
+			{
+				float h = 0.01 + 4.0*pow(float(i)/31.0,2.0);
+				vec2 an = hash2( ra + float(i)*13.1 )*vec2( 3.14159, 6.2831 );
+				vec3 dir = vec3( sin(an.x)*sin(an.y), sin(an.x)*cos(an.y), cos(an.x) );
+				dir *= sign( dot(dir,nor) );
+				occ += clamp( 5.0*map( pos + h*dir ).x/h, -1.0, 1.0);
+			}
+			return clamp(occ/32.0, 0.0, 1.0);
+		}
+		//===============================================================================
+		vec3 sunLig = normalize(vec3(0.7,0.1,0.4));
+		//===============================================================================
+		vec3 skyColor( in vec3 ro, in vec3 rd )
+		{
+			vec3 col = vec3(0.3,0.4,0.5)*0.3 - 0.3*rd.y;
+
+			//create clouds, using noise.
+			float t = (1000.0-ro.y)/rd.y;
+			vec2 sc = ro.xz + rd.xz*(SC*1000.0-ro.y)/rd.y;
+			vec2 uv = (ro+t*rd).xz;
+			float cl = noise(0.0005*uv.yx);
+			col = mix( col, vec3(0.3,0.2,0.1),0.6*smoothstep(0.3,0.7,fbm(0.0009*sc/SC)) );
+
+			//用渐变的方法mix，让渐变的程度，随ray direction的y越靠近0， 渐变越厉害。
+			//vec3(0.2,0.25,0.30)是个小小的灰色。
+			col = mix( col, vec3(0.2,0.25,0.30)*0.5, exp(-30.0*rd.y) ) ;//exp(x) = e(2.718..)^x, ()里是负数，这样，0的时候数值最大
+
+			//create a sunset. measure the distance of the ray or the pixel to the sun with the dot product
+			float sd = pow( clamp( 0.25 + 0.75*dot(sunLig,rd), 0.0, 1.0 ), 4.0 );//here it's like use the similar technique of the exposure light from the right
+			col = mix( col, vec3(1.2,0.30,0.05)*0.5, sd*exp(-abs((60.0-50.0*sd)*rd.y)) ) ;//same technique with the gradient color extent based on the rd.y
+
+			return col;
+		}
+
+		vec3 doBumpMap( in vec3 pos, in vec3 nor )
+		{
+			float e = 0.002;
+			float b = 0.015;
+
+			float ref = fbm6( 4.0*pos );
+			vec3 gra = -b*vec3( fbm6(4.0*vec3(pos.x+e, pos.y, pos.z))-ref,
+			fbm6(4.0*vec3(pos.x, pos.y+e, pos.z))-ref,
+			fbm6(4.0*vec3(pos.x, pos.y, pos.z+e))-ref )/e;
+
+			vec3 tgrad = gra - nor * dot ( nor , gra );
+			return normalize( nor - tgrad );
+		}
+
+		mat3 setCamera( in vec3 ro, in vec3 ta, float cr )
+		{
+			vec3 cw = normalize(ta-ro);
+			vec3 cp = vec3(sin(cr), cos(cr),0.0);
+			vec3 cu = normalize( cross(cw,cp) );
+			vec3 cv = normalize( cross(cu,cw) );
+			return mat3( cu, cv, cw );
+		}
+
+		void main(void) {
+
+			vec2 p = (2.0*gl_FragCoord.xy-resolution.xy) / resolution.y;
+
+			//give some noise point. but the uint is only available in webGL 2.0.
+			//uvec2 px = uvec2(gl_FragCoord.xy);
+			float ran = 0.0;//hash( px.x + 1920U*px.y + (1920U*1080U)*uint(0) );
+
+			//float an = -1.3;
+			float an = -1.3 + sin(time*0.05)*0.1 -1.3 + sin(time*0.05)*0.1;
+			float ra = 100.0;//70.0;
+			float fl = 3.0;
+			vec3 ta = vec3(0.0,0.0,-10.0);//vec3(0.0,-3.0,-23.0);//target
+			vec3 ro = ta + vec3(ra*sin(an),10.0,ra*cos(an));
+			mat3 ca = setCamera( ro, ta, 0.0 );
+			vec3 rd = ca * normalize( vec3(p.xy,fl));
+
+			vec3 col = vec3(0.0);
+
+			col = skyColor( ro, rd );
+			//eliminate the skycolor to test the occ color,
+			//col = vec3(1.0);
+
+			float resT = 10000.0;
+			vec3 res = intersect( ro, rd );
+			if( res.y>0.0 )
+			{
+				float t = res.x;
+				resT = t;
+				vec3 pos = ro + t*rd;
+				vec3 nor = calcNormal( pos, t );
+
+				float fre = pow( clamp( 1.0+dot(nor,rd), 0.0, 1.0), 5.0 );
+				float foc = 1.0;//start with white.
+
+				vec3 mate = vec3(0.2);
+				vec2 mspe = vec2(0.0);
+				float mbou = 0.0;
+				float mter = 0.0;
+
+				if(res.y < 1.5)
+				{
+					vec3 te = 0.001 * noised(nor).xyz;
+					mate = vec3(0.14,0.10,0.07) + 0.1*te;
+					mate *= 0.8 + 0.4*res.z;
+					mate *= 1.15;
+					mspe = vec2(1.0,8.0);
+					mbou = 1.0;
+
+					nor = doBumpMap( pos, nor );
+
+					foc = 0.7 + 0.3*smoothstep(0.4,0.7,fbm4( 3.0*pos ));
+
+					float ho = 1.0;
+					if( pos.y>-7.5 ) ho *= smoothstep( 0.0, 5.0, (pos.y+5.5)  );
+					//ho is the hand-made horizental occlusion
+					//measure the angle between the normal of the temple, comparing the vector that goes from the point at the center of the temple.
+					float gradientForHo = clamp( 0.6 + 0.4*dot( normalize(nor.xz*vec2(0.5,1.0)), normalize(pos.xz*vec2(0.5,1.0)) ) + 1.0*nor.y*nor.y,
+												0.0, 1.0 );
+					ho = mix( 0.1+ho*0.3, 1.0,  gradientForHo);
+					foc *= ho;
+					//add the dark blob for the floor.
+					foc *= 0.4 + 0.6*smoothstep( 2.0, 15.0, length(pos*vec3(0.5,0.25,1.0)) );
+					float rdis = clamp( -0.15*max(sdRhombus( pos.yz-vec2(8.3,0.0)+vec2(2.0,0.0), vec2(2.25,8.5), 0.05 ),-(pos.y-8.3+2.0)), 0.0, 1.0 );
+					if( rdis>0.0001 ) foc = 0.1 + sqrt(rdis);
+					//add dark areas 在柱子的顶端。
+					if( pos.y<5.8 ) foc *= 0.6 + 0.4*smoothstep( 0.0, 1.5, -(pos.y-5.8) );
+					if( pos.y<3.4 ) foc *= 0.6 + 0.4*smoothstep( 0.0, 2.5, -(pos.y-3.4)  );
+
+					foc *= 0.8;
+				}else if( res.y<2.5 )
+				{//hit the terrain
+				}
+				//calculate the ambient occlusion light.
+				float occ = 0.33 + 0.5*nor.y;
+				occ = calcOcclusion(pos,nor,ran);
+				occ *= foc;//fake occlusion. 其实是另一层temple的occ，这样temple的details会更多。是根据自己画的geo来算的。这样可以达到自己想要在某个区域加深度的目的。
+
+				vec3 lig = sunLig;
+				vec3 ligbak = normalize(vec3(-lig.x,0.0,-lig.z));
+				float dif = clamp( dot( nor, lig ), 0.0, 1.0 );
+				float sha = calcShadow( pos+nor*0.001, lig, 32.0 );
+				dif *= sha;
+				float amb = (0.8 + 0.2*nor.y);
+				amb = mix( amb, amb*(0.5+0.5*smoothstep( -8.0,-1.0,pos.y)), mbou );
+
+				vec3 qos = pos/1.5 - vec3(0.0,1.0,0.0);
+
+				float bak = clamp( 0.4+0.6*dot( nor, ligbak ), 0.0, 1.0 );
+				bak *= 0.6 + 0.4*smoothstep( -8.0,-1.0,qos.y);
+
+				vec3 hal = normalize( lig -rd );
+				float spe = pow( clamp( dot(nor,hal), 0.0, 1.0), mspe.y )*(0.1+0.9*fre)*sha*(0.5+0.5*occ);
+
+				//小trick：用smoothstep,来create an area, 小于3或大于1都不会有这个bouncing light
+				float bou = smoothstep(3.0, 1.0, length(pos.xz - vec2(9.,-0.3))*0.24);
+				bou *= clamp(0.5-0.5*nor.x, 0.0, 1.0);//modulating the amount of the lighting by the normal
+
+				//add the lighting.
+				col = vec3(0.0);
+				//ambient light，a blue light -> vec3(0.15,0.25,0.35, it's also from the sky (so it's blue)
+				col += amb*1.0*vec3(0.15,0.25,0.35)*occ*(1.0+mter);//(1.0+mter)是亮度。//1.0是unit s t r
+				//key light, sun. Good to move away from the scene, to create long shadows.
+				col += dif*5.0*vec3(0.90,0.55,0.35);
+				//the back light, opposite to the sun
+				col += bak*1.7*vec3(0.10,0.11,0.12)*occ*mbou;
+				//specular light
+				col += spe*6.0*mspe.x*occ;
+				//add the temple's interior indirect(bounce) lighting, now it's too dark
+				col += bou * 1.0 * vec3(1.0, 0.4, 0.005)*occ;//庙里现在多了一点点橙色的光
+				//end of adding lighting
+
+				col *= mate;
+
+				vec3 fogcol = vec3(0.2,0.25,0.30)*0.5;
+				float sd = pow( clamp( 0.25 + 0.75*dot(lig,rd), 0.0, 1.0 ), 4.0 );
+				fogcol = mix( fogcol, vec3(1.2,0.30,0.05)/1.2, sd*exp(-abs((60.0-50.0*sd)*abs(rd.y))) ) ;
+				float fog = 1.0 - exp(-0.0015*t);
+				col *= 1.0-0.5*fog;//this line fades things to black if the things are far.
+				col = mix( col, fogcol, fog );
+
+				//uncomment to see the effect of solely the occulusion.
+				//col = vec3(occ);
+
+			}
+			col = max( col, 0.0 );
+			//在图片右边加点over-exposure, since the sun is on the right
+			//过亮的时候，可以用pow（）来调整
+			//这时候乘以要的颜色，比如橙色/sun's color
+			col += 0.15*vec3(1.0,0.8,0.7)*pow( clamp( dot(rd,sunLig), 0.0, 1.0 ), 6.0 );//后面的指数，在图上反映成宽度，指数越小，画面上的光圈越大。
+
+			col = 1.2*col/(1.0+col);
+
+			col = sqrt( col );
+
+			//some post effects.
+			col = clamp( 1.9*col-0.1, 0.0, 1.0 );
+			col = col*0.1 + 0.9*col*col*(3.0-2.0*col);
+			col = pow( col, vec3(0.76,0.98,1.0) );
+
+			gl_FragColor = vec4(col, 1.0);
+		}
+
+	</script>
+	<script>
+		//change the resolution here. 1 is highest
+		var pixel_resolution = 4;
+		var container, stats;
+		var camera, scene, renderer;
+		var uniforms;
+		init();
+		animate();
+		function init() {
+			container = document.getElementById('container');
+			camera = new THREE.Camera();
+			camera.position.z = 1;
+			scene = new THREE.Scene();
+			var geometry = new THREE.PlaneBufferGeometry(2, 2);
+			uniforms = { time: { type: 'f', value: 1.0 }, resolution: { type: 'v2', value: new THREE.Vector2() }, mouse: {type: "v2", value: new THREE.Vector2()}};
+			var material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent });
+			var mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+			renderer = new THREE.WebGLRenderer();
+			//Hack here to change resolution 
+			renderer.setPixelRatio(window.devicePixelRatio / pixel_resolution);
+			container.appendChild(renderer.domElement);
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+	        window.addEventListener('mousemove', onMouseMove, false);
+
+		}
+		function onWindowResize(event) {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			uniforms.resolution.value.x = renderer.domElement.width;
+			uniforms.resolution.value.y = renderer.domElement.height;
+
+		}
+		function animate() {
+			requestAnimationFrame(animate);
+			render();
+		}
+		function onMouseMove( event ) {
+        	uniforms.mouse.value.x = 2 * ( event.clientX / window.innerWidth );
+ 	        uniforms.mouse.value.y = 2 * ( 1-(event.clientY) / window.innerHeight
+ 	        );
+        }
+		function render() {
+			uniforms.time.value += 0.01;
+			renderer.render(scene, camera);
+		}
+
+</script>
+</body>
+</html>
