@@ -67,6 +67,7 @@ It calculates the difference from the central point and the points oriented. Mor
 
 **Shape**: The basic shapes for the snowman are two spheres. I used min() to combine the shapes. Furthermore, I used "smooth min()" to blend shapes and make the juncture line smoother. 
 The eyes are two spheres. And the nose is made by a cone shape. They all blend with the main shape by min().
+
 **The jumping animation**: The jumping effect is achieved by changing the snowman's centre according to time. I recorded the integer and the fraction part of the time and used pow() to apply the change of y in the centre. Later, I further implement the x value to make the snowman jump left and right. 
 
 ``` 
@@ -77,7 +78,9 @@ itime + pow(ftime, 0.7)); //jumping forward.Use floor and fract to create a boun
 ### for the tree
 
 **Shape**: The shape is the combination of rounded cone and a column. 
+
 **Forest**: Used ``` mod() ``` to create many many trees. 
+
 **Surface**: Later in the development process, I applied noise on the surface so the trees have more details. So as to the thickness of the tree stumps and the ground.
 
 ## Noise Functions
@@ -85,14 +88,18 @@ itime + pow(ftime, 0.7)); //jumping forward.Use floor and fract to create a boun
 I explored different ways to do noise/random effects in both part 1(temple) and part2(snowman) projects. It includes traditional noise function (the smoothNoise function), the fbm(Fracional Brownian Motion), and the hash function. 
 
 **SmoothNoise**: It is the traditional way to make the noise, by calculating the four points around the point we want to calculate. That's the reason why ```id``` is added by vec2(1,0), vec2(0,1), and vec2(1,1). 
+
 **FBM**: It is by adding multiple noises together. Each time we doubled the frequency and at the same time make the amplitude twice smaller.
+
 **Hash**: I first got touch with the concept of hash is through shadertoy. A hash function is any function that can be used to map data of arbitrary size to fixed-size values. In our noise generator, we applied hash as the seed of a random number generator. So you can notice hash functions are applied in noise() function.
+
 Last but not least, **another way to do "random",** is to create a unique id for the position and added whatever numbers onto the id then applied them in a sine function. The numbers could confuse the sin and created a fake random effect. I learned this knowledge from a video by Inigo Quilez. The snowballs on the ground used this technique.
 
 ## Lighting
 
 The lighting part is also an exciting part. Actually, it's the most exciting part after drawing the scene. According to the PIXAR lighting rule, we created three lights: the sun light, the ambient light, the bounce light. There are also soft shadow, specular light, occlusion, fog applied into the scene. 
 In the end, we do gamma correction on the colors. We used sqrt() function or just simply multiply the col by 0.45545.
+
 The excellent explanation is on Inigo's blog [here](https://iquilezles.org/www/articles/outdoorslighting/outdoorslighting.htm).
 
 ## Personal Retrospective
