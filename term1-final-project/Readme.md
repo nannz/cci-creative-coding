@@ -8,6 +8,10 @@ The most significant feature is that it used the raymarching technique to create
 
 There is another project, which I marked as "part 1", called [Temple](https://git.arts.ac.uk/19040617/creative-computing/tree/master/term1-final-project/1-raymarch-temple). This project is more like my learning experience, in which I was first exposed to and explored 3D modelling, combing shapes, using different kinds of noise, setting a ray tracer, etc. 
 
+**Notice**
+
+If it runs extremely slow, please resize the window to a small ratio to see a smooth animation. Or you can adjust the pixel resolution in the code. 
+
 ## The Concept & Goal
 
 For the concept and ideation part, I chose the theme of a snowman in a winter scene. Because it is winter, so why not?
